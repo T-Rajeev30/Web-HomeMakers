@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
+import { saveStep } from "../store/useOnboarding";
 
 const genders = [
   { value: "female", label: "Female", icon: "female" },
@@ -14,6 +15,8 @@ const genders = [
 
 export default function PersonalInformation() {
   const [gender, setGender] = useState("female");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
   return (
     <OnboardingLayout step={1} stepLabel="Personal Information">
@@ -31,6 +34,7 @@ export default function PersonalInformation() {
           className="space-y-stack-lg"
           onSubmit={(e) => {
             e.preventDefault();
+            saveStep("personal", { name, email, gender });
             navigate("/address-details");
           }}
         >
@@ -38,13 +42,18 @@ export default function PersonalInformation() {
             label="Full Name"
             id="full-name"
             placeholder="e.g. Sunita Sharma"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
           <TextField
-            label="Email Address (Optional)"
+            label="Email Address"
             id="email"
             type="email"
             placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
 
           <div className="space-y-stack-sm">

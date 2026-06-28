@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
 import { STEPS } from "../data/onboarding";
+import { saveStep } from "../store/useOnboarding";
 
 export default function AddressDetails() {
   const navigate = useNavigate();
@@ -18,6 +19,12 @@ export default function AddressDetails() {
           className="space-y-stack-lg"
           onSubmit={(e) => {
             e.preventDefault();
+            const f = e.target;
+            saveStep("address", {
+              building: f.building.value,
+              locality: f.locality.value,
+              pincode: f.pincode.value,
+            });
             navigate(s.next);
           }}
         >

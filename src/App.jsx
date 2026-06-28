@@ -13,7 +13,12 @@ import OrderDetail from "./pages/OrderDetail";
 import Plans from "./pages/Plans";
 import Profile from "./pages/Profile";
 import AddressDetails from "./pages/AddressDetails";
+import TaxDetails from "./pages/TaxDetails";
 import BankDetails from "./pages/BankDetails";
+import FssaiDetails from "./pages/FssaiDetails";
+import AboutFood from "./pages/AboutFood";
+import SubscriptionSelect from "./pages/SubscriptionSelect";
+import KitchenPhotos from "./pages/KitchenPhotos";
 import KitchenInformation from "./pages/KitchenInformation";
 import ReviewSubmit from "./pages/ReviewSubmit";
 
@@ -57,7 +62,12 @@ export default function App() {
           <Route path="/orders/:id" element={<OrderDetail />} />
 
           <Route path="/address-details" element={<AddressDetails />} />
+          <Route path="/tax-details" element={<TaxDetails />} />
           <Route path="/bank-details" element={<BankDetails />} />
+          <Route path="/fssai-details" element={<FssaiDetails />} />
+          <Route path="/about-food" element={<AboutFood />} />
+          <Route path="/subscription" element={<SubscriptionSelect />} />
+          <Route path="/kitchen-photos" element={<KitchenPhotos />} />
           <Route path="/kitchen-information" element={<KitchenInformation />} />
           <Route path="/review-submit" element={<ReviewSubmit />} />
 
