@@ -77,7 +77,7 @@ export async function sendOtp(phone) {
     }
 
     window.sendOtp(
-      `91${phone}`,
+      `+91${phone}`,
       (data) => {
         // data carries the reqId internally; the SDK tracks it for verifyOtp.
         console.log("OTP Sent", data);
