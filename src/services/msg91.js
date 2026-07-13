@@ -70,6 +70,8 @@ export function initializeMsg91() {
 export async function sendOtp(phone) {
   await initializeMsg91();
 
+  const identifier = `91${phone.replace(/^\+?91/, "").replace(/\D/g, "")}`;
+
   return new Promise((resolve, reject) => {
     if (typeof window.sendOtp !== "function") {
       reject(new Error("MSG91 sendOtp() not found."));
@@ -77,9 +79,8 @@ export async function sendOtp(phone) {
     }
 
     window.sendOtp(
-      `+91${phone}`,
+      identifier,
       (data) => {
-        // data carries the reqId internally; the SDK tracks it for verifyOtp.
         console.log("OTP Sent", data);
         resolve(data);
       },
@@ -99,9 +100,8 @@ export function verifyOtp(otp) {
     }
 
     window.verifyOtp(
-      otp,
+      Number(otp), // MSG91 widget expects a numeric OTP, not a string
       (data) => {
-        // On success, data.message is the MSG91 access-token to send to backend.
         console.log("OTP Verified", data);
         resolve(data);
       },
