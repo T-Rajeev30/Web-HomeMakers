@@ -4,8 +4,10 @@ import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
+import api from "../services/api";
 
 const PAN_RE = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const GST_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$/;
@@ -16,15 +18,33 @@ export default function TaxDetails() {
   const [pan, setPan] = useState("");
   const [gst, setGst] = useState("");
   const [err, setErr] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (!PAN_RE.test(pan))
       return setErr("Enter a valid PAN (e.g. ABCDE1234F).");
     if (gst && !GST_RE.test(gst))
       return setErr("GST number format is invalid.");
-    saveStep("tax", { pan, gst });
-    navigate(s.next);
+
+    setErr("");
+    setSaving(true);
+    try {
+      await api.post("/api/onboarding/draft", {
+        step: "tax",
+        data: { pan, gst },
+      });
+      saveStep("tax", { pan, gst });
+      navigate(s.next);
+    } catch (error) {
+      setErr(
+        error.response?.data?.error ||
+          error.response?.data?.details?.[0]?.message ||
+          "Failed to save. Please try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -55,10 +75,13 @@ export default function TaxDetails() {
             onChange={(e) => setGst(e.target.value.toUpperCase())}
           />
           {err && (
-            <p className="text-label-sm font-label-sm text-error">{err}</p>
+            <div className="flex items-center gap-2 text-error px-4 py-3 bg-error-container rounded-lg">
+              <Icon name="error" className="text-base" />
+              <span className="text-label-lg font-label-lg">{err}</span>
+            </div>
           )}
-          <Button full icon="arrow_forward" type="submit">
-            Continue
+          <Button full icon="arrow_forward" type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Continue"}
           </Button>
         </form>
       </Card>
