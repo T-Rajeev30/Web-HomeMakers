@@ -7,6 +7,9 @@ import Icon from "../components/Icon";
 import { login } from "../store/useSession";
 import { initializeMsg91, sendOtp, verifyOtp } from "../services/msg91";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://zingro.in/auth-api";
+
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,19 +17,23 @@ export default function Login() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const from = location.state?.from || "/dashboard";
 
   useEffect(() => {
-    initializeMsg91();
+    initializeMsg91().catch((err) =>
+      setError(err.message || "Failed to initialize verification."),
+    );
   }, []);
 
   const handleSendOtp = async () => {
     setLoading(true);
+    setError("");
     try {
       await sendOtp(phone);
       setOtpSent(true);
     } catch (err) {
-      console.error("Send OTP failed:", err);
+      setError(err.message || "Failed to send OTP.");
     } finally {
       setLoading(false);
     }
@@ -34,16 +41,21 @@ export default function Login() {
 
   const handleVerifyOtp = async () => {
     setLoading(true);
+    setError("");
     try {
       const result = await verifyOtp(otp);
       const response = await axios.post(
-        "https://zingro.in/auth-api/api/v1/auth/verify-otp",
+        `${API_BASE_URL}/api/v1/auth/verify-otp`,
         { accessToken: result.message },
       );
       login(response.data.data);
       navigate(from);
     } catch (err) {
-      console.error("Verify OTP failed:", err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Incorrect OTP, please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -106,6 +118,13 @@ export default function Login() {
                 maxLength={6}
                 required
               />
+            )}
+
+            {error && (
+              <div className="flex items-center gap-2 text-error px-4 py-3 bg-error-container rounded-lg">
+                <Icon name="error" className="text-base" />
+                <span className="text-label-lg font-label-lg">{error}</span>
+              </div>
             )}
 
             <Button
