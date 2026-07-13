@@ -6,6 +6,7 @@ import TextField from "../components/TextField";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import { saveStep } from "../store/useOnboarding";
+import api from "../services/api";
 
 const genders = [
   { value: "female", label: "Female", icon: "female" },
@@ -17,7 +18,32 @@ export default function PersonalInformation() {
   const [gender, setGender] = useState("female");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSaving(true);
+    try {
+      await api.post("/api/onboarding/draft", {
+        step: "personal",
+        data: { name, email, gender },
+      });
+      saveStep("personal", { name, email, gender }); // local cache for progress UI
+      navigate("/address-details");
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.details?.[0]?.message ||
+          "Failed to save. Please try again.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <OnboardingLayout step={1} stepLabel="Personal Information">
       <Card className="p-6">
@@ -30,14 +56,7 @@ export default function PersonalInformation() {
           </p>
         </div>
 
-        <form
-          className="space-y-stack-lg"
-          onSubmit={(e) => {
-            e.preventDefault();
-            saveStep("personal", { name, email, gender });
-            navigate("/address-details");
-          }}
-        >
+        <form className="space-y-stack-lg" onSubmit={submit}>
           <TextField
             label="Full Name"
             id="full-name"
@@ -84,8 +103,15 @@ export default function PersonalInformation() {
             </div>
           </div>
 
-          <Button full icon="arrow_forward" type="submit">
-            Continue
+          {error && (
+            <div className="flex items-center gap-2 text-error px-4 py-3 bg-error-container rounded-lg">
+              <Icon name="error" className="text-base" />
+              <span className="text-label-lg font-label-lg">{error}</span>
+            </div>
+          )}
+
+          <Button full icon="arrow_forward" type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Continue"}
           </Button>
         </form>
       </Card>
