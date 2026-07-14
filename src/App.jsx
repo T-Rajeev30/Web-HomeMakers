@@ -38,6 +38,8 @@ import Contact from "./pages/Contact";
 import ContactPublic from "./pages/ContactPublic";
 
 import Billing from "./pages/Billing";
+import AdminCooksList from "./pages/AdminCooksList";
+import AdminCookDetail from "./pages/AdminCooksDetail";
 
 export default function App() {
   return (
@@ -94,6 +96,10 @@ export default function App() {
       <Route path="/contact" element={<ContactPublic />} />
       <Route path="/support" element={<Contact />} />
       <Route path="/plans/new" element={<CreatePlan />} />
+      <Route element={<AdminRoute />}>
+        <Route path="/admin/cooks" element={<AdminCooksList />} />
+        <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
+      </Route>
     </Routes>
   );
 }
