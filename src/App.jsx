@@ -40,6 +40,7 @@ import ContactPublic from "./pages/ContactPublic";
 import Billing from "./pages/Billing";
 import AdminCooksList from "./pages/AdminCooksList";
 import AdminCookDetail from "./pages/AdminCooksDetail";
+import AdminRoute from "./routes/AdminRoutes";
 
 export default function App() {
   return (
