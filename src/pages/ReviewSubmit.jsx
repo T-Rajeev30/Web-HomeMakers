@@ -11,6 +11,7 @@ import LegalModal, {
   TermsContent,
   PrivacyContent,
 } from "../components/LegalModal";
+import api from "../services/api";
 
 export default function ReviewSubmit() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export default function ReviewSubmit() {
   const [privacy, setPrivacy] = useState(false);
   const [legal, setLegal] = useState(null); // "terms" | "privacy" | null
   const [err, setErr] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const sections = [
     {
@@ -74,13 +76,25 @@ export default function ReviewSubmit() {
     },
   ];
 
-  const submit = () => {
+  const submit = async () => {
     if (!terms || !privacy)
       return setErr("Please accept the Terms and Privacy Policy to continue.");
-    // Backend: POST /api/onboarding/submit -> runs batch KYC (PAN, bank, FSSAI),
-    // logs consent { terms_accepted_at, ip }, sets status = verification_pending.
-    setVerification("submitted");
-    navigate(s.next);
+
+    setErr("");
+    setSubmitting(true);
+    try {
+      await api.post("/api/onboarding/submit", { terms: true, privacy: true });
+      setVerification("submitted");
+      navigate(s.next);
+    } catch (error) {
+      setErr(
+        error.response?.data?.error ||
+          error.response?.data?.details?.[0]?.message ||
+          "Failed to submit. Please try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -124,8 +138,8 @@ export default function ReviewSubmit() {
           KYC verification
         </Consent>
         {err && <p className="text-label-sm font-label-sm text-error">{err}</p>}
-        <Button full onClick={submit}>
-          Submit Application
+        <Button full onClick={submit} disabled={submitting}>
+          {submitting ? "Submitting..." : "Submit Application"}
         </Button>
       </div>
 
