@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "../components/Card";
 import Icon from "../components/Icon";
-import { useDishes, fetchDishes, toggleDish } from "../store/useDishes";
+import {
+  useDishes,
+  fetchDishes,
+  toggleDish,
+  deleteDish,
+} from "../store/useDishes";
 
 function Toggle({ checked, onChange }) {
   return (
