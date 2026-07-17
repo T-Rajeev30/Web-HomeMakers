@@ -121,9 +121,24 @@ export default function Menu() {
                     onChange={() => toggleDish(dish._id)}
                   />
                 </div>
-                <button className="flex items-center gap-1 text-primary font-label-lg px-2 py-1 rounded-lg hover:bg-surface-container-high transition-colors">
-                  <Icon name="edit" className="text-[20px]" /> Edit
-                </button>
+                <div className="flex items-center gap-1">
+                  <button className="flex items-center gap-1 text-primary font-label-lg px-2 py-1 rounded-lg hover:bg-surface-container-high transition-colors">
+                    <Icon name="edit" className="text-[20px]" /> Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (
+                        confirm(`Delete "${dish.name}"? This can't be undone.`)
+                      ) {
+                        deleteDish(dish._id);
+                      }
+                    }}
+                    className="flex items-center gap-1 text-error font-label-lg px-2 py-1 rounded-lg hover:bg-error-container transition-colors"
+                  >
+                    <Icon name="delete" className="text-[20px]" />
+                  </button>
+                </div>
               </div>
             </div>
           </Card>
