@@ -1,10 +1,12 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import TopAppBar from "../components/TopAppBar";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
 
 export default function Signup() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -26,30 +28,30 @@ export default function Signup() {
 
         <div className="mb-stack-lg">
           <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-2">
-            Create Your Account
+            {t("signup.title")}
           </h2>
           <p className="text-body-md text-on-surface-variant">
-            Start your food business journey with Zingro
+            {t("signup.subtitle")}
           </p>
         </div>
 
         <form className="space-y-gutter" onSubmit={handleSubmit}>
           <TextField
-            label="Full Name"
+            label={t("signup.fullName")}
             icon="person"
             id="name"
-            placeholder="e.g. Sunita Sharma"
+            placeholder={t("signup.fullNamePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
           <TextField
-            label="Phone Number"
+            label={t("signup.phoneNumber")}
             icon="call"
             prefix="+91"
             id="phone"
             type="tel"
-            placeholder="10-digit mobile number"
+            placeholder={t("signup.phoneNumberPlaceholder")}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
@@ -60,14 +62,14 @@ export default function Signup() {
             type="submit"
             className="mt-stack-md"
           >
-            Get OTP
+            {t("signup.getOtp")}
           </Button>
         </form>
 
         <p className="mt-stack-lg text-center text-body-md text-on-surface-variant">
-          Already have an account?{" "}
+          {t("signup.alreadyHaveAccount")}{" "}
           <Link to="/login" className="text-primary font-bold hover:underline">
-            Login
+            {t("signup.login")}
           </Link>
         </p>
       </main>

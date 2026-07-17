@@ -1,0 +1,39 @@
+{
+  "common": { "continue": "Continue", "back": "Back", "loading": "Loading…" },
+  "languageSelection": { "title": "Choose Your Language", "subtitle": "Select your preferred language" },
+  "signup": {
+    "title": "Create Your Account",
+    "subtitle": "Start your food business journey with Zingro",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "e.g. Sunita Sharma",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "10-digit mobile number",
+    "getOtp": "Get OTP",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "login": {
+    "welcomeBack": "Welcome Back",
+    "subtitle": "Sign in to manage your kitchen",
+    "phoneNumber": "Phone Number",
+    "phoneNumberPlaceholder": "Enter 10 digit number",
+    "otp": "OTP",
+    "otpPlaceholder": "Enter 6-digit OTP",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "pleaseWait": "Please wait...",
+    "dontHaveAccount": "Don't have an account?",
+    "signup": "Signup"
+  },
+  "otp": {
+    "verifyPhone": "Verify Phone Number",
+    "sendingCode": "Sending code to",
+    "enterCode": "Enter the 6-digit code sent to",
+    "didntReceive": "Didn't receive code?",
+    "resend": "Resend OTP",
+    "resendIn": "Resend OTP ({{seconds}}s)",
+    "verifyAndContinue": "Verify & Continue",
+    "verifying": "Verifying...",
+    "incompleteOtp": "Please enter the complete 6-digit OTP."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "common": { "continue": "కొనసాగించు", "back": "వెనుకకు", "loading": "లోడ్ అవుతోంది…" },
+  "languageSelection": { "title": "మీ భాషను ఎంచుకోండి", "subtitle": "మీకు ఇష్టమైన భాషను ఎంచుకోండి" },
+  "signup": {
+    "title": "మీ ఖాతాను సృష్టించండి",
+    "subtitle": "Zingroతో మీ ఆహార వ్యాపార ప్రయాణాన్ని ప్రారంభించండి",
+    "fullName": "పూర్తి పేరు",
+    "fullNamePlaceholder": "ఉదా. సునీతా శర్మ",
+    "phoneNumber": "ఫోన్ నంబర్",
+    "phoneNumberPlaceholder": "10 అంకెల మొబైల్ నంబర్",
+    "getOtp": "OTP పొందండి",
+    "alreadyHaveAccount": "ఇప్పటికే ఖాతా ఉందా?",
+    "login": "లాగిన్"
+  },
+  "login": {
+    "welcomeBack": "తిరిగి స్వాగతం",
+    "subtitle": "మీ వంటగదిని నిర్వహించడానికి సైన్ ఇన్ చేయండి",
+    "phoneNumber": "ఫోన్ నంబర్",
+    "phoneNumberPlaceholder": "10 అంకెల నంబర్‌ను నమోదు చేయండి",
+    "otp": "OTP",
+    "otpPlaceholder": "6 అంకెల OTPని నమోదు చేయండి",
+    "sendOtp": "OTP పంపండి",
+    "verifyOtp": "OTP ధృవీకరించండి",
+    "pleaseWait": "దయచేసి వేచి ఉండండి...",
+    "dontHaveAccount": "ఖాతా లేదా?",
+    "signup": "సైన్ అప్ చేయండి"
+  },
+  "otp": {
+    "verifyPhone": "ఫోన్ నంబర్‌ను ధృవీకరించండి",
+    "sendingCode": "కోడ్ పంపబడుతోంది",
+    "enterCode": "ఈ నంబర్‌కు పంపిన 6 అంకెల కోడ్‌ను నమోదు చేయండి",
+    "didntReceive": "కోడ్ రాలేదా?",
+    "resend": "OTP మళ్ళీ పంపండి",
+    "resendIn": "OTP మళ్ళీ పంపండి ({{seconds}}సె)",
+    "verifyAndContinue": "ధృవీకరించి కొనసాగించండి",
+    "verifying": "ధృవీకరిస్తోంది...",
+    "incompleteOtp": "దయచేసి పూర్తి 6 అంకెల OTPని నమోదు చేయండి."
+  }
+}

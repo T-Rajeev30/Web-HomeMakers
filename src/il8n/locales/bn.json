@@ -1,0 +1,39 @@
+{
+  "common": { "continue": "চালিয়ে যান", "back": "পেছনে", "loading": "লোড হচ্ছে…" },
+  "languageSelection": { "title": "আপনার ভাষা নির্বাচন করুন", "subtitle": "আপনার পছন্দের ভাষা নির্বাচন করুন" },
+  "signup": {
+    "title": "আপনার অ্যাকাউন্ট তৈরি করুন",
+    "subtitle": "Zingro-এর সাথে আপনার খাদ্য ব্যবসার যাত্রা শুরু করুন",
+    "fullName": "পুরো নাম",
+    "fullNamePlaceholder": "যেমন সুনীতা শর্মা",
+    "phoneNumber": "ফোন নম্বর",
+    "phoneNumberPlaceholder": "10 সংখ্যার মোবাইল নম্বর",
+    "getOtp": "OTP পান",
+    "alreadyHaveAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "login": "লগইন করুন"
+  },
+  "login": {
+    "welcomeBack": "আবার স্বাগতম",
+    "subtitle": "আপনার রান্নাঘর পরিচালনা করতে সাইন ইন করুন",
+    "phoneNumber": "ফোন নম্বর",
+    "phoneNumberPlaceholder": "10 সংখ্যার নম্বর লিখুন",
+    "otp": "OTP",
+    "otpPlaceholder": "6 সংখ্যার OTP লিখুন",
+    "sendOtp": "OTP পাঠান",
+    "verifyOtp": "OTP যাচাই করুন",
+    "pleaseWait": "অনুগ্রহ করে অপেক্ষা করুন...",
+    "dontHaveAccount": "অ্যাকাউন্ট নেই?",
+    "signup": "সাইন আপ করুন"
+  },
+  "otp": {
+    "verifyPhone": "ফোন নম্বর যাচাই করুন",
+    "sendingCode": "কোড পাঠানো হচ্ছে",
+    "enterCode": "এই নম্বরে পাঠানো 6 সংখ্যার কোড লিখুন",
+    "didntReceive": "কোড পাননি?",
+    "resend": "OTP আবার পাঠান",
+    "resendIn": "OTP আবার পাঠান ({{seconds}}সে)",
+    "verifyAndContinue": "যাচাই করুন এবং চালিয়ে যান",
+    "verifying": "যাচাই করা হচ্ছে...",
+    "incompleteOtp": "অনুগ্রহ করে সম্পূর্ণ 6 সংখ্যার OTP লিখুন।"
+  }
+}

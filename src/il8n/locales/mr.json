@@ -1,0 +1,39 @@
+{
+  "common": { "continue": "पुढे चला", "back": "मागे", "loading": "लोड होत आहे…" },
+  "languageSelection": { "title": "तुमची भाषा निवडा", "subtitle": "तुमची आवडती भाषा निवडा" },
+  "signup": {
+    "title": "तुमचे खाते तयार करा",
+    "subtitle": "Zingro सोबत तुमचा फूड बिझनेस प्रवास सुरू करा",
+    "fullName": "पूर्ण नाव",
+    "fullNamePlaceholder": "उदा. सुनीता शर्मा",
+    "phoneNumber": "फोन नंबर",
+    "phoneNumberPlaceholder": "10 अंकी मोबाइल नंबर",
+    "getOtp": "OTP मिळवा",
+    "alreadyHaveAccount": "आधीच खाते आहे?",
+    "login": "लॉगिन करा"
+  },
+  "login": {
+    "welcomeBack": "पुन्हा स्वागत आहे",
+    "subtitle": "तुमचे स्वयंपाकघर व्यवस्थापित करण्यासाठी साइन इन करा",
+    "phoneNumber": "फोन नंबर",
+    "phoneNumberPlaceholder": "10 अंकी नंबर टाका",
+    "otp": "OTP",
+    "otpPlaceholder": "6 अंकी OTP टाका",
+    "sendOtp": "OTP पाठवा",
+    "verifyOtp": "OTP सत्यापित करा",
+    "pleaseWait": "कृपया प्रतीक्षा करा...",
+    "dontHaveAccount": "खाते नाही?",
+    "signup": "साइन अप करा"
+  },
+  "otp": {
+    "verifyPhone": "फोन नंबर सत्यापित करा",
+    "sendingCode": "कोड पाठवला जात आहे",
+    "enterCode": "या नंबरवर पाठवलेला 6 अंकी कोड टाका",
+    "didntReceive": "कोड मिळाला नाही?",
+    "resend": "OTP पुन्हा पाठवा",
+    "resendIn": "OTP पुन्हा पाठवा ({{seconds}}से)",
+    "verifyAndContinue": "सत्यापित करा आणि पुढे चला",
+    "verifying": "सत्यापित करत आहे...",
+    "incompleteOtp": "कृपया संपूर्ण 6 अंकी OTP टाका."
+  }
+}

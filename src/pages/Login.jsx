@@ -1,5 +1,6 @@
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
@@ -11,6 +12,7 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://zingro.in/auth-api";
 
 export default function Login() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [phone, setPhone] = useState("");
@@ -46,7 +48,9 @@ export default function Login() {
       const result = await verifyOtp(otp);
       const response = await axios.post(
         `${API_BASE_URL}/api/v1/auth/verify-otp`,
-        { accessToken: result.message },
+        {
+          accessToken: result.message,
+        },
       );
       login(response.data.data);
       navigate(from);
@@ -87,34 +91,34 @@ export default function Login() {
         <div className="w-full bg-surface-container-lowest rounded-xl p-8 border border-outline-variant shadow-card">
           <header className="mb-8">
             <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-2">
-              Welcome Back
+              {t("login.welcomeBack")}
             </h2>
             <p className="text-body-md text-on-surface-variant">
-              Sign in to manage your kitchen
+              {t("login.subtitle")}
             </p>
           </header>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <TextField
-              label="Phone Number"
+              label={t("login.phoneNumber")}
               icon="call"
               id="phone"
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Enter 10 digit number"
+              placeholder={t("login.phoneNumberPlaceholder")}
               disabled={otpSent}
               required
             />
             {otpSent && (
               <TextField
-                label="OTP"
+                label={t("login.otp")}
                 icon="password"
                 id="otp"
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter 6-digit OTP"
+                placeholder={t("login.otpPlaceholder")}
                 maxLength={6}
                 required
               />
@@ -133,18 +137,22 @@ export default function Login() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Please wait..." : otpSent ? "Verify OTP" : "Send OTP"}
+              {loading
+                ? t("login.pleaseWait")
+                : otpSent
+                  ? t("login.verifyOtp")
+                  : t("login.sendOtp")}
             </Button>
           </form>
 
           <div className="mt-8 text-center border-t border-outline-variant pt-6">
             <p className="text-body-md text-on-surface-variant">
-              Don't have an account?{" "}
+              {t("login.dontHaveAccount")}{" "}
               <Link
                 to="/signup"
                 className="text-primary font-bold hover:underline"
               >
-                Signup
+                {t("login.signup")}
               </Link>
             </p>
           </div>

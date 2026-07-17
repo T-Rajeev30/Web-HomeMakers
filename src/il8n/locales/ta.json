@@ -1,0 +1,39 @@
+{
+  "common": { "continue": "தொடரவும்", "back": "பின்செல்", "loading": "ஏற்றுகிறது…" },
+  "languageSelection": { "title": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்", "subtitle": "உங்களுக்கு விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்" },
+  "signup": {
+    "title": "உங்கள் கணக்கை உருவாக்கவும்",
+    "subtitle": "Zingro உடன் உங்கள் உணவு வணிக பயணத்தைத் தொடங்குங்கள்",
+    "fullName": "முழு பெயர்",
+    "fullNamePlaceholder": "எ.கா. சுனிதா சர்மா",
+    "phoneNumber": "தொலைபேசி எண்",
+    "phoneNumberPlaceholder": "10 இலக்க மொபைல் எண்",
+    "getOtp": "OTP பெறவும்",
+    "alreadyHaveAccount": "ஏற்கனவே கணக்கு உள்ளதா?",
+    "login": "உள்நுழைய"
+  },
+  "login": {
+    "welcomeBack": "மீண்டும் வரவேற்கிறோம்",
+    "subtitle": "உங்கள் சமையலறையை நிர்வகிக்க உள்நுழையவும்",
+    "phoneNumber": "தொலைபேசி எண்",
+    "phoneNumberPlaceholder": "10 இலக்க எண்ணை உள்ளிடவும்",
+    "otp": "OTP",
+    "otpPlaceholder": "6 இலக்க OTP ஐ உள்ளிடவும்",
+    "sendOtp": "OTP அனுப்பவும்",
+    "verifyOtp": "OTP சரிபார்க்கவும்",
+    "pleaseWait": "காத்திருக்கவும்...",
+    "dontHaveAccount": "கணக்கு இல்லையா?",
+    "signup": "பதிவு செய்யவும்"
+  },
+  "otp": {
+    "verifyPhone": "தொலைபேசி எண்ணைச் சரிபார்க்கவும்",
+    "sendingCode": "குறியீடு அனுப்பப்படுகிறது",
+    "enterCode": "இந்த எண்ணுக்கு அனுப்பப்பட்ட 6 இலக்க குறியீட்டை உள்ளிடவும்",
+    "didntReceive": "குறியீடு கிடைக்கவில்லையா?",
+    "resend": "OTP மீண்டும் அனுப்பவும்",
+    "resendIn": "OTP மீண்டும் அனுப்பவும் ({{seconds}}வி)",
+    "verifyAndContinue": "சரிபார்த்து தொடரவும்",
+    "verifying": "சரிபார்க்கிறது...",
+    "incompleteOtp": "முழு 6 இலக்க OTP ஐ உள்ளிடவும்."
+  }
+}
