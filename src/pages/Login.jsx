@@ -45,7 +45,7 @@ export default function Login() {
     try {
       const result = await verifyOtp(otp);
       const response = await axios.post(
-        `${API_BASE_URL}/api/v1/auth/signup/homemaker`,
+        `${API_BASE_URL}/api/v1/auth/verify-otp`,
         { accessToken: result.message },
       );
       login(response.data.data);

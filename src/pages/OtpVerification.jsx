@@ -80,7 +80,7 @@ export default function OtpVerification() {
       const result = await verifyOtp(code);
 
       const response = await axios.post(
-        `${API_BASE_URL}/api/v1/auth/signup/homemaker`,
+        `${API_BASE_URL}/api/v1/auth/verify-otp`,
         { accessToken: result.message, name, role: "homemaker" },
       );
 
