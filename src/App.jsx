@@ -42,6 +42,7 @@ import AdminCooksList from "./pages/AdminCooksList";
 import AdminCookDetail from "./pages/AdminCooksDetail";
 import AdminRoute from "./routes/AdminRoutes";
 import Landing from "./pages/Landing";
+import AadhaarVerification from "./pages/AadhaarVerification";
 export default function App() {
   return (
     <Routes>
@@ -100,6 +101,7 @@ export default function App() {
         <Route path="/admin/cooks" element={<AdminCooksList />} />
         <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
       </Route>
+      <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
     </Routes>
   );
 }
