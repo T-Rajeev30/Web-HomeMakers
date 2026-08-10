@@ -12,11 +12,20 @@ import api from "../services/api";
 const PAN_RE = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const GST_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$/;
 
+// Converts a native <input type="date"> value (yyyy-MM-dd) to the
+// dd/MM/yyyy format Digio's PAN verification API requires.
+function toDigioDob(isoDate) {
+  if (!isoDate) return "";
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+}
+
 export default function TaxDetails() {
   const navigate = useNavigate();
   const s = STEPS.tax;
   const [pan, setPan] = useState("");
   const [gst, setGst] = useState("");
+  const [dob, setDob] = useState(""); // native input value, yyyy-MM-dd
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -24,6 +33,7 @@ export default function TaxDetails() {
     e.preventDefault();
     if (!PAN_RE.test(pan))
       return setErr("Enter a valid PAN (e.g. ABCDE1234F).");
+    if (!dob) return setErr("Date of birth is required for PAN verification.");
     if (gst && !GST_RE.test(gst))
       return setErr("GST number format is invalid.");
 
@@ -32,9 +42,9 @@ export default function TaxDetails() {
     try {
       await api.post("/api/onboarding/draft", {
         step: "tax",
-        data: { pan, gst },
+        data: { pan, gst, dob: toDigioDob(dob) },
       });
-      saveStep("tax", { pan, gst });
+      saveStep("tax", { pan, gst, dob });
       navigate(s.next);
     } catch (error) {
       setErr(
@@ -66,6 +76,26 @@ export default function TaxDetails() {
             onChange={(e) => setPan(e.target.value.toUpperCase())}
             required
           />
+          <div>
+            <label
+              htmlFor="dob"
+              className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
+            >
+              Date of Birth
+            </label>
+            <input
+              id="dob"
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              max={new Date().toISOString().split("T")[0]}
+              required
+              className="w-full h-touch-target-min px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            />
+            <p className="mt-1 text-label-sm font-label-sm text-on-surface-variant">
+              Must match your PAN card exactly for verification to succeed.
+            </p>
+          </div>
           <TextField
             label="GST Number (Optional)"
             id="gst"
