@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+﻿import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
 import Toast from "./components/Toast";
 
@@ -60,7 +60,7 @@ export default function App() {
         <Route path="/document-upload" element={<DocumentUpload />} />
         {/* App shell (with bottom nav + drawer) */}
         <Route element={<ProtectedRoute />}>
-          {/* App screens — full layout with bottom navigation */}
+          {/* App screens â€” full layout with bottom navigation */}
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/orders" element={<Orders />} />
@@ -71,11 +71,12 @@ export default function App() {
             <Route path="/billing" element={<Billing />} />
           </Route>
 
-          {/* Onboarding & verification — no bottom navigation */}
+          {/* Onboarding & verification â€” no bottom navigation */}
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/tax-details" element={<TaxDetails />} />
           <Route path="/bank-details" element={<BankDetails />} />
           <Route path="/fssai-details" element={<FssaiDetails />} />
+        <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
           <Route path="/about-food" element={<AboutFood />} />
           <Route path="/kitchen-photos" element={<KitchenPhotos />} />
           <Route path="/kitchen-information" element={<KitchenInformation />} />
@@ -105,7 +106,6 @@ export default function App() {
           <Route path="/admin/cooks" element={<AdminCooksList />} />
           <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
         </Route>
-        <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
       </Routes>
     </>
   );

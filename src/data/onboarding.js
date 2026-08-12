@@ -1,5 +1,5 @@
-// Onboarding: 8 sequential steps (batch KYC at final submit)
-export const TOTAL_STEPS = 8;
+﻿// Onboarding: 9 sequential steps (batch KYC at final submit)
+export const TOTAL_STEPS = 9;
 
 export const STEPS = {
   personal: {
@@ -10,11 +10,12 @@ export const STEPS = {
   address: { step: 2, label: "Address Details", next: "/tax-details" },
   tax: { step: 3, label: "Tax Details", next: "/bank-details" },
   bank: { step: 4, label: "Bank Details", next: "/fssai-details" },
-  fssai: { step: 5, label: "FSSAI License", next: "/about-food" },
-  food: { step: 6, label: "About Your Food", next: "/kitchen-photos" },
-  photos: { step: 7, label: "Kitchen Photos", next: "/review-submit" },
+  fssai: { step: 5, label: "FSSAI License", next: "/aadhaar-verification" },
+  aadhaar: { step: 6, label: "Aadhaar Verification", next: "/about-food" },
+  food: { step: 7, label: "About Your Food", next: "/kitchen-photos" },
+  photos: { step: 8, label: "Kitchen Photos", next: "/review-submit" },
   review: {
-    step: 8,
+    step: 9,
     label: "Review & Submit",
     next: "/verification-submitted",
   },
