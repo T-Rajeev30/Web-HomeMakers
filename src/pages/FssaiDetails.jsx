@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
+import { showToast } from "../store/useToast";
 
 export default function FssaiDetails() {
   const navigate = useNavigate();
@@ -24,10 +25,18 @@ export default function FssaiDetails() {
     setErr("");
     setSaving(true);
     try {
-      await api.post("/api/onboarding/draft", {
+      const res = await api.post("/api/onboarding/draft", {
         step: "fssai",
         data: { license },
       });
+if (res.data.verification) {
+  showToast(
+    res.data.verification.verified ? "success" : "error",
+    res.data.verification.verified
+      ? "FSSAI license verified successfully"
+      : "FSSAI license could not be verified — will need manual review",
+  );
+}
       saveStep("fssai", { license });
       navigate(s.next);
     } catch (error) {

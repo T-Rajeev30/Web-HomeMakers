@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
+import { showToast } from "../store/useToast";
 
 const PAN_RE = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const GST_RE = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][0-9A-Z]{3}$/;
@@ -40,10 +41,18 @@ export default function TaxDetails() {
     setErr("");
     setSaving(true);
     try {
-      await api.post("/api/onboarding/draft", {
+      const res = await api.post("/api/onboarding/draft", {
         step: "tax",
         data: { pan, gst, dob: toDigioDob(dob) },
       });
+if (res.data.verification) {
+  showToast(
+    res.data.verification.verified ? "success" : "error",
+    res.data.verification.verified
+      ? "PAN verified successfully"
+      : "PAN could not be verified — will need manual review",
+  );
+}
       saveStep("tax", { pan, gst, dob });
       navigate(s.next);
     } catch (error) {

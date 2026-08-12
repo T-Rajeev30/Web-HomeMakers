@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
@@ -8,6 +8,7 @@ import Icon from "../components/Icon";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
+import { showToast } from "../store/useToast";
 
 const IFSC_RE = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 
@@ -32,7 +33,15 @@ export default function BankDetails() {
     setErr("");
     setSaving(true);
     try {
-      await api.post("/api/onboarding/draft", { step: "bank", data: form });
+      const res = await api.post("/api/onboarding/draft", { step: "bank", data: form });
+if (res.data.verification) {
+  showToast(
+    res.data.verification.verified ? "success" : "error",
+    res.data.verification.verified
+      ? "Bank account verified successfully"
+      : "Bank account could not be verified — will need manual review",
+  );
+}
       saveStep("bank", form);
       navigate(s.next);
     } catch (error) {
@@ -53,7 +62,7 @@ export default function BankDetails() {
           Bank account details
         </h2>
         <p className="text-body-md text-on-surface-variant mb-stack-lg">
-          Used for payouts. We verify via a ₹1 penny-drop at submission.
+          Used for payouts. We verify via a â‚¹1 penny-drop at submission.
         </p>
         <form className="space-y-stack-lg" onSubmit={submit}>
           <TextField
