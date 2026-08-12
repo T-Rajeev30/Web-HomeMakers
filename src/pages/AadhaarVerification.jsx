@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import api from "../services/api";
+import { STEPS } from "../data/onboarding";
 import { showToast } from "../store/useToast";
 
 export default function AadhaarVerification() {
@@ -47,7 +48,7 @@ export default function AadhaarVerification() {
   };
 
   return (
-    <OnboardingLayout step={9} stepLabel="Aadhaar Verification">
+    <OnboardingLayout step={STEPS.aadhaar.step} stepLabel="Aadhaar Verification">
       <Card className="p-6 text-center">
         <div className="w-16 h-16 mx-auto mb-stack-md rounded-full bg-primary-fixed flex items-center justify-center">
           <Icon name="badge" className="text-primary text-[32px]" />
@@ -71,7 +72,7 @@ export default function AadhaarVerification() {
           <Button
             full
             icon="arrow_forward"
-            onClick={() => navigate("/about-food")}
+            onClick={() => navigate(STEPS.aadhaar.next)}
           >
             Continue
           </Button>
