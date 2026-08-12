@@ -1,4 +1,4 @@
-import { useToast } from "../store/useToast";
+﻿import { useToast } from "../store/useToast";
 import Icon from "./Icon";
 
 export default function Toast() {
@@ -15,11 +15,7 @@ export default function Toast() {
           : "bg-error-container text-on-error-container"
       }`}
     >
-      <Icon
-        name={isSuccess ? "check_circle" : "error"}
-        fill
-        className="text-[20px] shrink-0"
-      />
+      <Icon name={isSuccess ? "check_circle" : "error"} fill className="text-[20px] shrink-0" />
       <span className="text-label-lg font-label-lg">{toast.message}</span>
     </div>
   );
