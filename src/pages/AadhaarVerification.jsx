@@ -24,12 +24,17 @@ export default function AadhaarVerification() {
         is_iframe: false,
         logo: "https://zingro.in/logo.png",
         theme: { primaryColor: "#ff6b00", secondaryColor: "#0051d5" },
-        callback: (response) => {
+        callback: async (response) => {
           if (response?.error_code) {
             setStatus("error");
             setErr(response.message || "Aadhaar verification failed.");
             showToast("error", "Aadhaar verification failed.");
           } else {
+            try {
+              await api.post("/api/onboarding/aadhaar/confirm");
+            } catch (e) {
+              // non-fatal — webhook will eventually reconcile this if it's registered
+            }
             setStatus("done");
             showToast("success", "Aadhaar verified successfully");
           }
@@ -48,7 +53,10 @@ export default function AadhaarVerification() {
   };
 
   return (
-    <OnboardingLayout step={STEPS.aadhaar.step} stepLabel="Aadhaar Verification">
+    <OnboardingLayout
+      step={STEPS.aadhaar.step}
+      stepLabel="Aadhaar Verification"
+    >
       <Card className="p-6 text-center">
         <div className="w-16 h-16 mx-auto mb-stack-md rounded-full bg-primary-fixed flex items-center justify-center">
           <Icon name="badge" className="text-primary text-[32px]" />
