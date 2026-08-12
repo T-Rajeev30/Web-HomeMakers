@@ -1,10 +1,11 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import api from "../services/api";
+import { showToast } from "../store/useToast";
 
 export default function AadhaarVerification() {
   const navigate = useNavigate();
@@ -26,8 +27,10 @@ export default function AadhaarVerification() {
           if (response?.error_code) {
             setStatus("error");
             setErr(response.message || "Aadhaar verification failed.");
+            showToast("error", "Aadhaar verification failed.");
           } else {
             setStatus("done");
+            showToast("success", "Aadhaar verified successfully");
           }
         },
       });

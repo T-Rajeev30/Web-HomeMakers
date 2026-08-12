@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import AppLayout from "./components/AppLayout";
+import Toast from "./components/Toast";
+
 import LanguageSelection from "./pages/LanguageSelection";
 import Signup from "./pages/Signup";
 import OtpVerification from "./pages/OtpVerification";
@@ -45,63 +47,66 @@ import Landing from "./pages/Landing";
 import AadhaarVerification from "./pages/AadhaarVerification";
 export default function App() {
   return (
-    <Routes>
-      {/* Auth & onboarding (no bottom nav) */}
-      <Route path="/" element={<Landing />} />
-      <Route path="/language" element={<LanguageSelection />} />{" "}
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/otp" element={<OtpVerification />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/personal-information" element={<PersonalInformation />} />
-      <Route path="/document-upload" element={<DocumentUpload />} />
-      {/* App shell (with bottom nav + drawer) */}
-      <Route element={<ProtectedRoute />}>
-        {/* App screens — full layout with bottom navigation */}
-        <Route element={<AppLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/plans" element={<Plans />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/orders/:id" element={<OrderDetail />} />
-          <Route path="/billing" element={<Billing />} />
-        </Route>
+    <>
+      <Toast />
+      <Routes>
+        {/* Auth & onboarding (no bottom nav) */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/language" element={<LanguageSelection />} />{" "}
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/otp" element={<OtpVerification />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/personal-information" element={<PersonalInformation />} />
+        <Route path="/document-upload" element={<DocumentUpload />} />
+        {/* App shell (with bottom nav + drawer) */}
+        <Route element={<ProtectedRoute />}>
+          {/* App screens — full layout with bottom navigation */}
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/plans" element={<Plans />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/orders/:id" element={<OrderDetail />} />
+            <Route path="/billing" element={<Billing />} />
+          </Route>
 
-        {/* Onboarding & verification — no bottom navigation */}
-        <Route path="/address-details" element={<AddressDetails />} />
-        <Route path="/tax-details" element={<TaxDetails />} />
-        <Route path="/bank-details" element={<BankDetails />} />
-        <Route path="/fssai-details" element={<FssaiDetails />} />
-        <Route path="/about-food" element={<AboutFood />} />
-        <Route path="/kitchen-photos" element={<KitchenPhotos />} />
-        <Route path="/kitchen-information" element={<KitchenInformation />} />
-        <Route path="/review-submit" element={<ReviewSubmit />} />
-        <Route
-          path="/verification-submitted"
-          element={<VerificationSubmitted />}
-        />
-        <Route path="/under-review" element={<UnderReview />} />
-        <Route
-          path="/verification-approved"
-          element={<VerificationApproved />}
-        />
-        <Route
-          path="/verification-rejected"
-          element={<VerificationRejected />}
-        />
-        <Route path="/document-reupload" element={<DocumentReupload />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
-      <Route path="/menu/add" element={<AddDish />} />
-      <Route path="/menu/categories" element={<ManageCategories />} />
-      <Route path="/contact" element={<ContactPublic />} />
-      <Route path="/support" element={<Contact />} />
-      <Route path="/plans/new" element={<CreatePlan />} />
-      <Route element={<AdminRoute />}>
-        <Route path="/admin/cooks" element={<AdminCooksList />} />
-        <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
-      </Route>
-      <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
-    </Routes>
+          {/* Onboarding & verification — no bottom navigation */}
+          <Route path="/address-details" element={<AddressDetails />} />
+          <Route path="/tax-details" element={<TaxDetails />} />
+          <Route path="/bank-details" element={<BankDetails />} />
+          <Route path="/fssai-details" element={<FssaiDetails />} />
+          <Route path="/about-food" element={<AboutFood />} />
+          <Route path="/kitchen-photos" element={<KitchenPhotos />} />
+          <Route path="/kitchen-information" element={<KitchenInformation />} />
+          <Route path="/review-submit" element={<ReviewSubmit />} />
+          <Route
+            path="/verification-submitted"
+            element={<VerificationSubmitted />}
+          />
+          <Route path="/under-review" element={<UnderReview />} />
+          <Route
+            path="/verification-approved"
+            element={<VerificationApproved />}
+          />
+          <Route
+            path="/verification-rejected"
+            element={<VerificationRejected />}
+          />
+          <Route path="/document-reupload" element={<DocumentReupload />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/menu/add" element={<AddDish />} />
+        <Route path="/menu/categories" element={<ManageCategories />} />
+        <Route path="/contact" element={<ContactPublic />} />
+        <Route path="/support" element={<Contact />} />
+        <Route path="/plans/new" element={<CreatePlan />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/cooks" element={<AdminCooksList />} />
+          <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
+        </Route>
+        <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
+      </Routes>
+    </>
   );
 }
