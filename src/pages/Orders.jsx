@@ -4,6 +4,8 @@ import { Card, Chip } from "../components/Card";
 import Icon from "../components/Icon";
 import { useOrdersState, fetchOrders } from "../store/useOrders";
 import { statusMeta, orderTypeMeta } from "../data/orderStatus";
+import { BRAND_GRADIENT } from "../lib/brand";
+
 const tabs = ["New", "Active", "History"];
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
@@ -27,9 +29,10 @@ export default function Orders() {
             onClick={() => setTab(t)}
             className={`px-6 py-2 rounded-full font-label-lg text-label-lg transition-all active:scale-95 ${
               tab === t
-                ? "bg-primary text-on-primary shadow-card"
+                ? "text-white shadow-card"
                 : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
             }`}
+            style={tab === t ? { background: BRAND_GRADIENT } : undefined}
           >
             {t}
           </button>

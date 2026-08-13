@@ -8,6 +8,7 @@ export default function TopAppBar({
   onMenu,
   logo = false,
   right = "translate",
+  onRight,
 }) {
   const navigate = useNavigate();
   return (
@@ -45,9 +46,13 @@ export default function TopAppBar({
             </h1>
           )}
         </div>
-        {right && (
+        {/* Only rendered once a real handler is wired up — previously this
+            showed a "translate" icon on nearly every screen with no
+            onClick at all. Pass onRight to actually enable it. */}
+        {right && onRight && (
           <button
             aria-label="Language"
+            onClick={onRight}
             className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-90 transition-transform shrink-0"
           >
             <Icon name={right} />

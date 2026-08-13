@@ -8,15 +8,19 @@ import {
   toggleDish,
   deleteDish,
 } from "../store/useDishes";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 function Toggle({ checked, onChange }) {
   return (
     <button
       onClick={onChange}
-      className={`relative w-11 h-6 rounded-full transition-colors ${
-        checked ? "bg-primary" : "bg-outline-variant"
-      }`}
+      className="relative w-11 h-6 rounded-full transition-colors"
+      style={{ background: checked ? BRAND_GRADIENT : undefined }}
+      data-checked={checked}
     >
+      {!checked && (
+        <span className="absolute inset-0 rounded-full bg-outline-variant" />
+      )}
       <span
         className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
           checked ? "translate-x-5" : ""
@@ -99,7 +103,10 @@ export default function Menu() {
                 <Icon name="restaurant" className="text-[48px] text-outline" />
               )}
               {dish.tag && (
-                <span className="absolute top-2 right-2 bg-primary-container text-on-primary px-2 py-1 rounded-lg text-label-sm font-label-sm shadow-card">
+                <span
+                  className="absolute top-2 right-2 text-white px-2 py-1 rounded-lg text-label-sm font-label-sm shadow-card"
+                  style={{ background: BRAND_GRADIENT }}
+                >
                   {dish.tag}
                 </span>
               )}
@@ -153,7 +160,8 @@ export default function Menu() {
       <button
         onClick={() => navigate("/menu/add")}
         aria-label="Add new dish"
-        className="fixed bottom-28 right-margin-mobile w-14 h-14 rounded-full bg-primary text-on-primary shadow-modal flex items-center justify-center active:scale-95 transition-transform z-40"
+        className="fixed bottom-28 right-margin-mobile w-14 h-14 rounded-full text-white shadow-modal flex items-center justify-center active:scale-95 transition-transform z-40"
+        style={{ background: BRAND_GRADIENT }}
       >
         <Icon name="add" className="text-[28px]" />
       </button>
