@@ -33,9 +33,11 @@ export default function TopAppBar({
             </button>
           )}
           {logo && (
-            <span className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight shrink-0">
-              ZINGRO
-            </span>
+            <img
+              src="/logo.png"
+              alt="Zingro"
+              className="h-8 w-auto object-contain shrink-0"
+            />
           )}
           {title && (
             <h1 className="text-headline-md font-headline-md text-on-surface truncate">
