@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import TopAppBar from "../components/TopAppBar";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
 import { addPlan } from "../store/usePlans";
 import { durations } from "../data/onboarding";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 export default function CreatePlan() {
   const navigate = useNavigate();
@@ -33,9 +35,18 @@ export default function CreatePlan() {
     <div className="min-h-screen flex flex-col bg-surface">
       <TopAppBar showBack title="Plans" />
       <main className="flex-1 px-margin-mobile pt-stack-md pb-stack-lg animate-fade-in">
-        <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-stack-lg">
-          Create New Plan
-        </h2>
+        <div className="flex items-center gap-4 mb-stack-lg">
+          <div
+            className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <Icon name="subscriptions" className="text-white text-[26px]" />
+          </div>
+          <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+            Create New Plan
+          </h2>
+        </div>
+
         <form className="space-y-stack-lg" onSubmit={submit}>
           <TextField
             label="Plan Name"

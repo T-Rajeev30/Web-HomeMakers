@@ -9,6 +9,7 @@ import {
 } from "../store/useBilling";
 import { inr } from "../data/billing";
 import { generateInvoicePdf } from "../utils/invoicePdf";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const tabs = [
   { key: "order", label: "Order" },
@@ -59,9 +60,12 @@ export default function Billing() {
             onClick={() => setInvoiceType(t.key)}
             className={`px-5 py-2 rounded-full font-label-lg text-label-lg transition-all active:scale-95 ${
               active === t.key
-                ? "bg-primary text-on-primary shadow-card"
+                ? "text-white shadow-card"
                 : "bg-surface-container-high text-on-surface-variant"
             }`}
+            style={
+              active === t.key ? { background: BRAND_GRADIENT } : undefined
+            }
           >
             {t.label}
           </button>
@@ -71,9 +75,11 @@ export default function Billing() {
       <Card className="p-5" id="invoice">
         <div className="flex justify-between items-start mb-stack-md">
           <div>
-            <span className="font-headline-md text-headline-md text-primary tracking-tight">
-              ZINGRO
-            </span>
+            <img
+              src="/logo.png"
+              alt="Zingro"
+              className="h-7 w-auto object-contain"
+            />
             <p className="text-label-sm font-label-sm text-on-surface-variant mt-1">
               Kiran Kumar K · Bengaluru
             </p>

@@ -8,6 +8,7 @@ import CameraCapture from "../components/CameraCapture";
 import { addDish } from "../store/useDishes";
 import { categories } from "../data/mock";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const normalizeContentType = (type) =>
   type === "image/png" ? "image/png" : "image/jpeg";
@@ -77,9 +78,18 @@ export default function AddDish() {
     <div className="min-h-screen flex flex-col bg-surface">
       <TopAppBar showBack title="Menu" />
       <main className="flex-1 px-margin-mobile pt-stack-md pb-stack-lg animate-fade-in">
-        <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-stack-lg">
-          Add New Dish
-        </h2>
+        <div className="flex items-center gap-4 mb-stack-lg">
+          <div
+            className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <Icon name="add_circle" className="text-white text-[26px]" />
+          </div>
+          <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+            Add New Dish
+          </h2>
+        </div>
+
         <form className="space-y-stack-lg" onSubmit={submit}>
           <div>
             <p className="text-label-lg font-label-lg text-on-surface-variant mb-2">

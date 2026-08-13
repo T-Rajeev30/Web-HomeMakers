@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, Chip, ProgressBar } from "../components/Card";
 import Button from "../components/Button";
 import { usePlans } from "../store/usePlans";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 export default function Plans() {
   const navigate = useNavigate();
@@ -23,7 +24,17 @@ export default function Plans() {
           return (
             <Card
               key={plan.id}
-              className={`p-4 ${active ? "border-primary" : ""}`}
+              className="p-4"
+              style={
+                active
+                  ? {
+                      border: "2px solid transparent",
+                      backgroundImage: `linear-gradient(var(--surface-container-lowest, #fff), var(--surface-container-lowest, #fff)), ${BRAND_GRADIENT}`,
+                      backgroundOrigin: "border-box",
+                      backgroundClip: "padding-box, border-box",
+                    }
+                  : undefined
+              }
             >
               <div className="flex justify-between items-start mb-1">
                 <h3 className="text-headline-md font-headline-md text-on-surface">

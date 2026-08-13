@@ -10,6 +10,8 @@ import {
   primaryAction,
   orderTypeMeta,
 } from "../data/orderStatus";
+import { BRAND_GRADIENT } from "../lib/brand";
+
 const inr = (n) => `₹${Number(n).toLocaleString("en-IN")}`;
 
 const steps = [
@@ -117,21 +119,28 @@ export default function OrderDetail() {
                 >
                   {i > 0 && (
                     <span
-                      className={`absolute top-5 right-1/2 w-full h-0.5 ${
-                        i <= activeIndex
-                          ? "bg-primary"
-                          : "bg-surface-container-highest"
-                      }`}
+                      className="absolute top-5 right-1/2 w-full h-0.5"
+                      style={{
+                        background:
+                          i <= activeIndex
+                            ? BRAND_GRADIENT
+                            : "var(--surface-container-highest, #e5e5e5)",
+                      }}
                     />
                   )}
                   <div
-                    className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center ${
-                      done
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-container-highest text-outline"
-                    }`}
+                    className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ background: done ? BRAND_GRADIENT : undefined }}
                   >
-                    <Icon name={s.icon} className="text-[20px]" />
+                    {!done && (
+                      <span className="absolute inset-0 rounded-full bg-surface-container-highest" />
+                    )}
+                    <Icon
+                      name={s.icon}
+                      className={`relative text-[20px] ${
+                        done ? "text-white" : "text-outline"
+                      }`}
+                    />
                   </div>
                   <span
                     className={`text-label-sm font-label-sm ${
