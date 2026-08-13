@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Icon from "./Icon";
-import { logout } from "../store/useSession";
+import { logout, useSession } from "../store/useSession";
 import { BRAND_GRADIENT } from "../lib/brand";
 
 const navItems = [
@@ -13,6 +13,8 @@ const navItems = [
 
 export default function SideDrawer({ open, onClose }) {
   const navigate = useNavigate();
+  const { user } = useSession();
+
   return (
     <div
       className={`fixed inset-0 z-[100] ${open ? "" : "pointer-events-none"}`}
@@ -37,12 +39,11 @@ export default function SideDrawer({ open, onClose }) {
               <Icon name="person" className="text-[32px]" />
             </div>
             <div>
-              {/* TODO: hardcoded — wire up to real session/user data */}
               <h2 className="text-headline-md font-headline-md text-on-surface">
-                Sunita Sharma
+                {user?.personal?.name || user?.name || "—"}
               </h2>
               <p className="text-label-sm font-label-sm text-on-surface-variant">
-                Kitchen ID: ZG1234
+                Kitchen ID: {user?.kitchenId || user?._id || "—"}
               </p>
             </div>
           </div>

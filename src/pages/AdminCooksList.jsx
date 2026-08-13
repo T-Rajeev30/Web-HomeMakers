@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Chip } from "../components/Card";
+import Icon from "../components/Icon";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const STATUS_TABS = [
   { value: "manual_review", label: "Manual Review" },
@@ -12,6 +14,10 @@ const STATUS_TABS = [
   { value: "", label: "All" },
 ];
 
+// NOTE: rejected currently maps to the same "neutral" tone as draft, so the
+// two are visually indistinguishable in the list. Left as-is since I can't
+// confirm Chip supports an error/danger tone without its source — flagging
+// rather than guessing a tone string that might not exist.
 const chipTone = {
   draft: "neutral",
   verification_pending: "pending",
@@ -41,9 +47,17 @@ export default function AdminCooksList() {
 
   return (
     <main className="px-margin-mobile pt-stack-md pb-stack-lg animate-fade-in">
-      <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-stack-md">
-        Cook Applications
-      </h2>
+      <div className="flex items-center gap-4 mb-stack-md">
+        <div
+          className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+          style={{ background: BRAND_GRADIENT }}
+        >
+          <Icon name="assignment_ind" className="text-white text-[26px]" />
+        </div>
+        <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+          Cook Applications
+        </h2>
+      </div>
 
       <nav className="flex items-center gap-2 py-stack-sm mb-stack-md overflow-x-auto hide-scrollbar">
         {STATUS_TABS.map((t) => (
@@ -52,9 +66,12 @@ export default function AdminCooksList() {
             onClick={() => setStatus(t.value)}
             className={`px-4 py-2 rounded-full font-label-sm text-label-sm whitespace-nowrap transition-all active:scale-95 ${
               status === t.value
-                ? "bg-primary text-on-primary shadow-card"
+                ? "text-white shadow-card"
                 : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
             }`}
+            style={
+              status === t.value ? { background: BRAND_GRADIENT } : undefined
+            }
           >
             {t.label}
           </button>
