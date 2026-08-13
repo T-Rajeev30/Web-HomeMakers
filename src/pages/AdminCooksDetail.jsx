@@ -5,6 +5,7 @@ import { Card, Chip } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const chipTone = {
   draft: "neutral",
@@ -29,7 +30,8 @@ function Verdict({ label, ok }) {
       <Icon
         name={ok ? "check_circle" : "cancel"}
         fill
-        className={`text-[18px] ${ok ? "text-primary" : "text-error"}`}
+        className="text-[18px]"
+        style={{ color: ok ? "#0fb59b" : "var(--error, #dc2626)" }}
       />
       <span className="text-label-sm font-label-sm text-on-surface-variant">
         {label}
@@ -79,11 +81,19 @@ export default function AdminCookDetail() {
     <div className="min-h-screen flex flex-col bg-surface">
       <TopAppBar showBack title="Application Review" right={null} />
       <main className="flex-1 px-margin-mobile pt-stack-md pb-32 animate-fade-in">
-        <div className="flex justify-between items-center mb-stack-md">
-          <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
-            {cook.personal?.name || "—"}
-          </h2>
-          <Chip tone={chipTone[cook.status] || "neutral"}>{cook.status}</Chip>
+        <div className="flex items-center gap-4 mb-stack-md">
+          <div
+            className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <Icon name="fact_check" className="text-white text-[22px]" />
+          </div>
+          <div className="flex-1 flex justify-between items-center">
+            <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+              {cook.personal?.name || "—"}
+            </h2>
+            <Chip tone={chipTone[cook.status] || "neutral"}>{cook.status}</Chip>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-stack-md mb-stack-lg">
