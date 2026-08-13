@@ -121,11 +121,12 @@ export default function Landing() {
         style={{ borderColor: "#151c2714", backgroundColor: "#fcf9f8" }}
       >
         <div className="max-w-6xl mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-          <span
-            className="text-xl tracking-tight"
-            style={{ fontWeight: 800, color: "#ff6b00" }}
-          >
-            ZINGRO
+          <span>
+            <img
+              src="/logo.png"
+              alt="Zingro"
+              className="h-8 w-auto object-contain shrink-0"
+            />
           </span>
           <a
             href="#faq"
@@ -431,12 +432,12 @@ export default function Landing() {
         style={{ borderColor: "#151c2714" }}
       >
         <div className="max-w-6xl mx-auto px-6 md:px-10 py-10 flex flex-col items-center gap-3 text-center">
-          <span
-            className="text-lg tracking-tight"
-            style={{ fontWeight: 800, color: "#ff6b00" }}
-          >
-            ZINGRO
-          </span>
+          <img
+            src="/logo.png"
+            alt="Zingro"
+            className="h-8 w-auto object-contain shrink-0"
+          />
+
           <button
             onClick={() => navigate("/contact")}
             className="text-sm hover:opacity-70 transition-opacity"
