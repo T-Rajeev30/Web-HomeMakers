@@ -11,14 +11,14 @@ export default function TopAppBar({
 }) {
   const navigate = useNavigate();
   return (
-    <header className="sticky top-0 z-40 w-full bg-surface shadow-sm">
+    <header className="sticky top-0 z-40 w-full bg-surface/95 backdrop-blur-sm border-b border-outline-variant/40">
       <div className="flex justify-between items-center w-full px-margin-mobile h-touch-target-min">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {showBack && (
             <button
               aria-label="Back"
               onClick={() => navigate(-1)}
-              className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-95 transition-transform"
+              className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-90 transition-transform shrink-0"
             >
               <Icon name="arrow_back" />
             </button>
@@ -27,24 +27,26 @@ export default function TopAppBar({
             <button
               aria-label="Menu"
               onClick={onMenu}
-              className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-95 transition-transform"
+              className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-90 transition-transform shrink-0"
             >
               <Icon name="menu" />
             </button>
           )}
           {logo && (
-            <span className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">
+            <span className="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight shrink-0">
               ZINGRO
             </span>
           )}
           {title && (
-            <h1 className="text-headline-md font-headline-md text-on-surface">{title}</h1>
+            <h1 className="text-headline-md font-headline-md text-on-surface truncate">
+              {title}
+            </h1>
           )}
         </div>
         {right && (
           <button
             aria-label="Language"
-            className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-95 transition-transform"
+            className="w-touch-target-min h-touch-target-min flex items-center justify-center text-primary active:scale-90 transition-transform shrink-0"
           >
             <Icon name={right} />
           </button>
