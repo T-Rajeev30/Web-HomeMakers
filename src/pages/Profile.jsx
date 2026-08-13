@@ -5,6 +5,7 @@ import Icon from "../components/Icon";
 import Button from "../components/Button";
 import api from "../services/api";
 import { logout } from "../store/useSession";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 function Row({ label, value }) {
   return (
@@ -78,7 +79,10 @@ export default function Profile() {
         <>
           <Card className="p-5 mb-stack-md">
             <div className="flex items-center gap-4 mb-stack-md">
-              <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center text-white"
+                style={{ background: BRAND_GRADIENT }}
+              >
                 <Icon name="storefront" className="text-[32px]" />
               </div>
               <div className="flex-1">
@@ -124,10 +128,14 @@ export default function Profile() {
               </h3>
               <button
                 onClick={() => setClusterEnabled((v) => !v)}
-                className={`relative w-11 h-6 rounded-full transition-colors ${
-                  clusterEnabled ? "bg-primary" : "bg-outline-variant"
-                }`}
+                className="relative w-11 h-6 rounded-full transition-colors"
+                style={{
+                  background: clusterEnabled ? BRAND_GRADIENT : undefined,
+                }}
               >
+                {!clusterEnabled && (
+                  <span className="absolute inset-0 rounded-full bg-outline-variant" />
+                )}
                 <span
                   className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
                     clusterEnabled ? "translate-x-5" : ""
