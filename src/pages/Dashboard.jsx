@@ -3,10 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "../components/Card";
 import Icon from "../components/Icon";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
-function StatCard({ icon, iconClass, period, value, valueClass, label }) {
+function StatCard({
+  icon,
+  iconClass,
+  accent,
+  period,
+  value,
+  valueClass,
+  label,
+}) {
   return (
-    <Card className="p-5 rounded-2xl flex flex-col justify-between h-40">
+    <Card className="relative p-5 rounded-2xl flex flex-col justify-between h-40 overflow-hidden">
+      <span
+        className="absolute top-0 left-0 right-0 h-1"
+        style={{ background: accent }}
+      />
       <div className="flex justify-between items-start">
         <span
           className={`material-symbols-outlined p-2 rounded-lg ${iconClass}`}
@@ -73,6 +86,25 @@ const BANNER_BY_STATUS = {
   },
 };
 
+// Maps each banner's `tone` to real classes. Previously `tone` was defined
+// but never read — every status rendered with the same tertiary styling,
+// so an approved vs. rejected kitchen looked identical on the dashboard.
+const BANNER_TONE_STYLES = {
+  tertiary: {
+    wrap: "border-tertiary-container bg-tertiary-fixed text-on-tertiary-fixed",
+    icon: "text-tertiary",
+  },
+  primary: {
+    wrap: "border-transparent text-white",
+    icon: "text-white",
+    wrapStyle: { background: BRAND_GRADIENT },
+  },
+  error: {
+    wrap: "border-error/30 bg-error-container text-on-error-container",
+    icon: "text-error",
+  },
+};
+
 const monthName = new Date().toLocaleString("default", { month: "long" });
 
 export default function Dashboard() {
@@ -95,6 +127,7 @@ export default function Dashboard() {
   }, []);
 
   const banner = status ? BANNER_BY_STATUS[status.status] : null;
+  const bannerStyle = banner ? BANNER_TONE_STYLES[banner.tone] : null;
   const bannerTo =
     status?.status === "draft"
       ? STEP_ROUTES[status.currentStep] || "/personal-information"
@@ -120,9 +153,10 @@ export default function Dashboard() {
       {banner && (
         <button
           onClick={() => navigate(bannerTo)}
-          className="w-full flex items-center gap-4 p-4 mb-stack-lg rounded-xl border border-tertiary-container bg-tertiary-fixed text-on-tertiary-fixed shadow-card text-left"
+          className={`w-full flex items-center gap-4 p-4 mb-stack-lg rounded-xl border shadow-card text-left transition-transform active:scale-[0.99] ${bannerStyle.wrap}`}
+          style={bannerStyle.wrapStyle}
         >
-          <Icon name={banner.icon} className="text-tertiary" />
+          <Icon name={banner.icon} className={bannerStyle.icon} />
           <div className="flex-1">
             <p className="text-label-lg font-label-lg">{banner.title}</p>
             <p className="text-label-sm font-label-sm opacity-80">
@@ -137,6 +171,7 @@ export default function Dashboard() {
         <StatCard
           icon="shopping_basket"
           iconClass="text-primary bg-primary-fixed"
+          accent="linear-gradient(90deg, #FA8C0A, #F05A64)"
           period="Today"
           value={loading ? "—" : (stats?.todayOrders ?? 0)}
           valueClass="text-primary"
@@ -145,6 +180,7 @@ export default function Dashboard() {
         <StatCard
           icon="payments"
           iconClass="text-secondary bg-secondary-fixed"
+          accent="linear-gradient(90deg, #E63C78, #7832F0)"
           period={monthName}
           value={
             loading
@@ -163,7 +199,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => navigate("/menu/add")}
-            className="flex flex-col items-center justify-center gap-3 p-4 bg-primary text-on-primary rounded-2xl min-h-[100px] active:scale-95 transition-all shadow-card"
+            className="flex flex-col items-center justify-center gap-3 p-4 text-white rounded-2xl min-h-[100px] active:scale-95 transition-all shadow-card"
+            style={{ background: BRAND_GRADIENT }}
           >
             <Icon name="add_circle" className="text-[32px]" />
             <span className="font-label-lg text-label-lg">Add New Dish</span>
