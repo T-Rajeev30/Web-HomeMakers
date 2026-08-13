@@ -1,9 +1,12 @@
-import { useNavigate, Link } from "react-router-dom";
+﻿import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import TopAppBar from "../components/TopAppBar";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
+
+const BRAND_GRADIENT =
+  "linear-gradient(120deg, #FA8C0A 0%, #F05A64 45%, #E63C78 70%, #7832F0 100%)";
 
 export default function Signup() {
   const { t } = useTranslation();
@@ -17,13 +20,27 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
+      <div
+        className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-20 blur-[90px] pointer-events-none"
+        style={{ background: BRAND_GRADIENT }}
+      />
+
       <TopAppBar logo right={null} />
-      <main className="w-full max-w-md mx-auto px-margin-mobile py-stack-lg flex-1 flex flex-col">
-        <div className="relative w-full h-40 mb-stack-lg rounded-xl overflow-hidden bg-primary-fixed/40 flex items-center justify-center">
-          <span className="material-symbols-outlined text-primary text-[64px]">
-            storefront
-          </span>
+      <main className="relative w-full max-w-md mx-auto px-margin-mobile py-stack-lg flex-1 flex flex-col">
+        <div className="relative w-full h-40 mb-stack-lg rounded-xl overflow-hidden flex items-center justify-center">
+          <div
+            className="absolute inset-0 opacity-15"
+            style={{ background: BRAND_GRADIENT }}
+          />
+          <div
+            className="relative w-20 h-20 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <span className="material-symbols-outlined text-white text-[36px]">
+              storefront
+            </span>
+          </div>
         </div>
 
         <div className="mb-stack-lg">
@@ -68,7 +85,11 @@ export default function Signup() {
 
         <p className="mt-stack-lg text-center text-body-md text-on-surface-variant">
           {t("signup.alreadyHaveAccount")}{" "}
-          <Link to="/login" className="text-primary font-bold hover:underline">
+          <Link
+            to="/login"
+            className="font-bold hover:underline bg-clip-text text-transparent"
+            style={{ backgroundImage: BRAND_GRADIENT }}
+          >
             {t("signup.login")}
           </Link>
         </p>

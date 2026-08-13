@@ -23,7 +23,7 @@ export default function AadhaarVerification() {
         environment: "production",
         is_iframe: false,
         logo: "https://zingro.in/logo.png",
-        theme: { primaryColor: "#ff6b00", secondaryColor: "#0051d5" },
+        theme: { primaryColor: "#ff6b00", secondaryColor: "#7832f0" },
         callback: async (response) => {
           if (response?.error_code) {
             setStatus("error");

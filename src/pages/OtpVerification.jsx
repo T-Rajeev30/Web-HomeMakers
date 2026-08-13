@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import axios from "axios";
 import TopAppBar from "../components/TopAppBar";
@@ -9,6 +9,9 @@ import { initializeMsg91, sendOtp, verifyOtp } from "../services/msg91";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://zingro.in/auth-api";
+
+const BRAND_GRADIENT =
+  "linear-gradient(120deg, #FA8C0A 0%, #F05A64 45%, #E63C78 70%, #7832F0 100%)";
 
 export default function OtpVerification() {
   const navigate = useNavigate();
@@ -97,9 +100,14 @@ export default function OtpVerification() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
+      <div
+        className="absolute -top-24 -right-16 w-64 h-64 rounded-full opacity-20 blur-[90px] pointer-events-none"
+        style={{ background: BRAND_GRADIENT }}
+      />
+
       <TopAppBar showBack />
-      <main className="w-full max-w-md mx-auto px-margin-mobile mt-stack-lg flex-grow flex flex-col">
+      <main className="relative w-full max-w-md mx-auto px-margin-mobile mt-stack-lg flex-grow flex flex-col">
         <div className="mb-stack-lg">
           <h1 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface mb-stack-sm">
             Verify Phone Number
@@ -122,13 +130,24 @@ export default function OtpVerification() {
                 inputMode="numeric"
                 maxLength={1}
                 disabled={sending}
-                className={`w-12 h-16 text-center text-headline-lg font-headline-lg rounded-xl bg-surface-container-lowest border-2 outline-none transition-all ${
+                className={`w-12 h-16 text-center text-headline-lg font-headline-lg rounded-xl bg-surface-container-lowest outline-none transition-all ${
                   error
-                    ? "border-error"
+                    ? "border-2 border-error"
                     : digit
-                      ? "border-primary"
-                      : "border-outline-variant"
-                } focus:border-primary`}
+                      ? "border-2"
+                      : "border-2 border-outline-variant focus:border-primary"
+                }`}
+                style={
+                  !error && digit
+                    ? {
+                        borderStyle: "solid",
+                        borderColor: "transparent",
+                        backgroundImage: `linear-gradient(var(--surface-container-lowest, #fff), var(--surface-container-lowest, #fff)), ${BRAND_GRADIENT}`,
+                        backgroundOrigin: "border-box",
+                        backgroundClip: "padding-box, border-box",
+                      }
+                    : undefined
+                }
               />
             ))}
           </div>
@@ -147,7 +166,16 @@ export default function OtpVerification() {
             <button
               disabled={seconds > 0}
               onClick={handleResend}
-              className="text-primary font-label-lg hover:underline disabled:text-outline disabled:no-underline"
+              className="font-label-lg hover:underline disabled:text-outline disabled:no-underline disabled:bg-none"
+              style={
+                seconds > 0
+                  ? undefined
+                  : {
+                      backgroundImage: BRAND_GRADIENT,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }
+              }
             >
               {seconds > 0 ? `Resend OTP (${seconds}s)` : "Resend OTP"}
             </button>
