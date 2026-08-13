@@ -63,6 +63,12 @@ export default function ReviewSubmit() {
       to: "/fssai-details",
     },
     {
+      icon: "badge",
+      title: "Aadhaar",
+      sub: d.aadhaar?.verified ? "Verified" : "—",
+      to: "/aadhaar-verification",
+    },
+    {
       icon: "restaurant",
       title: "About Food",
       sub:
@@ -72,7 +78,7 @@ export default function ReviewSubmit() {
     {
       icon: "photo_camera",
       title: "Kitchen Photos",
-      sub: d.photos?.kitchenGps ? "GPS-tagged photos added" : "—",
+      sub: d.photos?.gps ? "GPS-tagged photos added" : "—",
       to: "/kitchen-photos",
     },
   ];

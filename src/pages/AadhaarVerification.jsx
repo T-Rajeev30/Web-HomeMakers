@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import Icon from "../components/Icon";
 import api from "../services/api";
 import { STEPS } from "../data/onboarding";
+import { saveStep } from "../store/useOnboarding";
 import { showToast } from "../store/useToast";
 import { BRAND_GRADIENT } from "../lib/brand";
 
@@ -42,6 +43,7 @@ export default function AadhaarVerification() {
             } catch (e) {
               // non-fatal — webhook will eventually reconcile this if it's registered
             }
+            saveStep("aadhaar", { verified: true });
             setStatus("done");
             showToast("success", "Aadhaar verified successfully");
           }
