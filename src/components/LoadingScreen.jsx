@@ -26,6 +26,10 @@
           }}
         />
       </div>
+
+      <p className="absolute bottom-8 text-xs sm:text-sm font-semibold text-black/70">
+        © {new Date().getFullYear()} Zingro™. All rights reserved.
+      </p>
     </div>
   );
 }

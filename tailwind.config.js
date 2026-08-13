@@ -1,4 +1,4 @@
-/** Zingro Homemaker design tokens (ported from Stitch DESIGN.md) */
+﻿/** Zingro Homemaker design tokens (ported from Stitch DESIGN.md) */
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],
@@ -32,14 +32,14 @@ export default {
         "on-primary-fixed-variant": "#923700",
         "inverse-primary": "#ffb68d",
         "surface-tint": "#ff6b00",
-        secondary: "#0051d5",
+        secondary: "#7832f0",
         "on-secondary": "#ffffff",
-        "secondary-container": "#316bf3",
-        "on-secondary-container": "#fefcff",
-        "secondary-fixed": "#dbe1ff",
-        "secondary-fixed-dim": "#b4c5ff",
-        "on-secondary-fixed": "#00174b",
-        "on-secondary-fixed-variant": "#003ea8",
+        "secondary-container": "#9257f5",
+        "on-secondary-container": "#ffffff",
+        "secondary-fixed": "#e9dcfd",
+        "secondary-fixed-dim": "#c9a8fa",
+        "on-secondary-fixed": "#2a0d5c",
+        "on-secondary-fixed-variant": "#5a1fc7",
         tertiary: "#9b3e3b",
         "on-tertiary": "#ffffff",
         "tertiary-container": "#ba5551",
