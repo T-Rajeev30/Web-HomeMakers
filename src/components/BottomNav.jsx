@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import Icon from "./Icon";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const items = [
   { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
@@ -19,9 +20,12 @@ export default function BottomNav() {
           className={({ isActive }) =>
             `flex flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1 transition-all active:scale-95 ${
               isActive
-                ? "bg-primary text-on-primary"
+                ? "text-white"
                 : "text-on-surface-variant hover:bg-surface-container-highest"
             }`
+          }
+          style={({ isActive }) =>
+            isActive ? { background: BRAND_GRADIENT } : undefined
           }
         >
           {({ isActive }) => (

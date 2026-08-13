@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import Icon from "./Icon";
 import { logout } from "../store/useSession";
+import { BRAND_GRADIENT } from "../lib/brand";
+
 const navItems = [
   { icon: "payments", label: "Earnings" },
   { icon: "star", label: "Reviews", fill: true },
@@ -28,10 +30,14 @@ export default function SideDrawer({ open, onClose }) {
       >
         <div className="px-6 py-6 border-b border-outline-variant">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center text-white"
+              style={{ background: BRAND_GRADIENT }}
+            >
               <Icon name="person" className="text-[32px]" />
             </div>
             <div>
+              {/* TODO: hardcoded — wire up to real session/user data */}
               <h2 className="text-headline-md font-headline-md text-on-surface">
                 Sunita Sharma
               </h2>
