@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import Icon from "../components/Icon";
 import { login } from "../store/useSession";
 import { initializeMsg91, sendOtp, verifyOtp } from "../services/msg91";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://zingro.in/auth-api";
@@ -75,17 +76,25 @@ export default function Login() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden">
-      <div className="fixed inset-0 -z-10 opacity-30 pointer-events-none">
-        <div className="absolute -top-[10%] -right-[5%] w-[400px] h-[400px] bg-primary-fixed-dim rounded-full blur-[120px]" />
-        <div className="absolute -bottom-[10%] -left-[5%] w-[300px] h-[300px] bg-secondary-container rounded-full blur-[120px]" />
+    <div className="relative min-h-screen flex flex-col overflow-hidden bg-background">
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div
+          className="absolute -top-[10%] -right-[5%] w-[400px] h-[400px] rounded-full opacity-20 blur-[120px]"
+          style={{ background: BRAND_GRADIENT }}
+        />
+        <div
+          className="absolute -bottom-[10%] -left-[5%] w-[300px] h-[300px] rounded-full opacity-15 blur-[120px]"
+          style={{ background: BRAND_GRADIENT }}
+        />
       </div>
 
       <main className="flex-grow flex flex-col items-center justify-center px-margin-mobile py-stack-lg w-full max-w-md mx-auto">
-        <div className="mb-10 text-center">
-          <span className="font-headline-lg text-[40px] font-extrabold text-primary tracking-tight">
-            ZINGRO
-          </span>
+        <div className="mb-10 flex flex-col items-center">
+          <img
+            src="/logo.png"
+            alt="Zingro"
+            className="h-12 w-auto object-contain"
+          />
         </div>
 
         <div className="w-full bg-surface-container-lowest rounded-xl p-8 border border-outline-variant shadow-card">
@@ -150,7 +159,8 @@ export default function Login() {
               {t("login.dontHaveAccount")}{" "}
               <Link
                 to="/signup"
-                className="text-primary font-bold hover:underline"
+                className="font-bold hover:underline bg-clip-text text-transparent"
+                style={{ backgroundImage: BRAND_GRADIENT }}
               >
                 {t("login.signup")}
               </Link>
@@ -159,13 +169,19 @@ export default function Login() {
         </div>
 
         <footer className="mt-10 flex flex-col items-center gap-5">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+          <button
+            type="button"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors"
+          >
             <Icon name="language" className="text-[20px]" />
             <span className="font-label-lg text-label-lg">English</span>
             <Icon name="expand_more" className="text-[18px]" />
           </button>
-          <p className="text-label-sm text-outline uppercase tracking-widest">
-            Empowering Home Chefs Everywhere
+          <p
+            className="text-label-sm font-semibold uppercase tracking-widest bg-clip-text text-transparent"
+            style={{ backgroundImage: BRAND_GRADIENT }}
+          >
+            Real Food · Real Kitchens
           </p>
         </footer>
       </main>
