@@ -4,6 +4,7 @@ import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
+import ValidityHint from "../components/ValidityHint";
 import {
   STEPS,
   cuisines,
@@ -12,6 +13,9 @@ import {
 } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
+
+const MIN_DESC = 20;
 
 function Select({ label, id, options, value, onChange, placeholder }) {
   return (
@@ -55,6 +59,16 @@ export default function AboutFood() {
   const [saving, setSaving] = useState(false);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  const descLen = form.description.length;
+  const descState =
+    descLen === 0 ? "neutral" : descLen < MIN_DESC ? "error" : "success";
+  const descHint =
+    descLen === 0
+      ? `At least ${MIN_DESC} characters — help customers picture your kitchen`
+      : descLen < MIN_DESC
+        ? `${descLen}/${MIN_DESC} characters minimum`
+        : "Good — this reads well";
+
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
@@ -77,12 +91,23 @@ export default function AboutFood() {
   return (
     <OnboardingLayout step={s.step} stepLabel={s.label}>
       <Card className="p-6">
-        <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">
-          Tell us about your food
-        </h2>
-        <p className="text-body-md text-on-surface-variant mb-stack-lg">
-          This helps customers discover your kitchen.
-        </p>
+        <div className="flex items-center gap-4 mb-stack-lg">
+          <div
+            className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <Icon name="restaurant" className="text-white text-[26px]" />
+          </div>
+          <div>
+            <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">
+              Tell us about your food
+            </h2>
+            <p className="text-body-md text-on-surface-variant">
+              This helps customers discover your kitchen.
+            </p>
+          </div>
+        </div>
+
         <form className="space-y-stack-lg" onSubmit={submit}>
           <Select
             label="Primary Cuisine"
@@ -124,6 +149,7 @@ export default function AboutFood() {
               className="w-full px-4 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface placeholder:text-outline/60 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
               required
             />
+            <ValidityHint state={descState} text={descHint} />
           </div>
           {err && (
             <div className="flex items-center gap-2 text-error px-4 py-3 bg-error-container rounded-lg">
@@ -131,7 +157,12 @@ export default function AboutFood() {
               <span className="text-label-lg font-label-lg">{err}</span>
             </div>
           )}
-          <Button full icon="arrow_forward" type="submit" disabled={saving}>
+          <Button
+            full
+            icon="arrow_forward"
+            type="submit"
+            disabled={saving || descLen < MIN_DESC}
+          >
             {saving ? "Saving..." : "Continue"}
           </Button>
         </form>

@@ -12,6 +12,7 @@ import LegalModal, {
   PrivacyContent,
 } from "../components/LegalModal";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 export default function ReviewSubmit() {
   const navigate = useNavigate();
@@ -76,6 +77,9 @@ export default function ReviewSubmit() {
     },
   ];
 
+  const incompleteCount = sections.filter((i) => i.sub === "—").length;
+  const allComplete = incompleteCount === 0;
+
   const submit = async () => {
     if (!terms || !privacy)
       return setErr("Please accept the Terms and Privacy Policy to continue.");
@@ -99,32 +103,69 @@ export default function ReviewSubmit() {
 
   return (
     <OnboardingLayout step={s.step} stepLabel={s.label}>
-      <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-stack-lg">
-        Review your details
-      </h2>
+      <div className="flex items-center gap-4 mb-stack-lg">
+        <div
+          className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+          style={{ background: BRAND_GRADIENT }}
+        >
+          <Icon name="fact_check" className="text-white text-[26px]" />
+        </div>
+        <div>
+          <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">
+            Review your details
+          </h2>
+          <p className="text-body-md text-on-surface-variant">
+            {allComplete
+              ? "Everything looks complete."
+              : `${incompleteCount} section${incompleteCount > 1 ? "s" : ""} still need attention.`}
+          </p>
+        </div>
+      </div>
+
       <section className="flex flex-col gap-stack-md">
-        {sections.map((item) => (
-          <Card key={item.title} className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
-              <Icon name={item.icon} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-label-lg text-label-lg text-on-surface">
-                {item.title}
-              </p>
-              <p className="text-label-sm font-label-sm text-on-surface-variant truncate">
-                {item.sub}
-              </p>
-            </div>
-            <button
-              aria-label={`Edit ${item.title}`}
-              onClick={() => navigate(item.to)}
-              className="text-on-surface-variant active:scale-95"
-            >
-              <Icon name="edit" className="text-[20px]" />
-            </button>
-          </Card>
-        ))}
+        {sections.map((item) => {
+          const complete = item.sub !== "—";
+          return (
+            <Card key={item.title} className="p-4 flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                style={{
+                  background: complete ? `${BRAND_GRADIENT}` : undefined,
+                }}
+              >
+                <Icon
+                  name={item.icon}
+                  className={
+                    complete ? "text-white" : "text-on-surface-variant"
+                  }
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="font-label-lg text-label-lg text-on-surface">
+                    {item.title}
+                  </p>
+                  {!complete && (
+                    <span className="flex items-center gap-1 text-label-sm font-label-sm text-error">
+                      <Icon name="warning" className="text-[14px]" />
+                      Missing
+                    </span>
+                  )}
+                </div>
+                <p className="text-label-sm font-label-sm text-on-surface-variant truncate">
+                  {item.sub}
+                </p>
+              </div>
+              <button
+                aria-label={`Edit ${item.title}`}
+                onClick={() => navigate(item.to)}
+                className="text-on-surface-variant active:scale-95 shrink-0"
+              >
+                <Icon name="edit" className="text-[20px]" />
+              </button>
+            </Card>
+          );
+        })}
       </section>
 
       <div className="mt-stack-lg space-y-stack-md">
@@ -180,12 +221,15 @@ function Consent({ checked, onChange, children }) {
         onClick={() => onChange(!checked)}
         aria-label="Toggle agreement"
         className={`mt-0.5 w-5 h-5 shrink-0 rounded flex items-center justify-center border transition-all ${
-          checked
-            ? "bg-primary border-primary text-on-primary"
-            : "border-outline-variant"
+          checked ? "" : "border-outline-variant"
         }`}
+        style={
+          checked
+            ? { background: BRAND_GRADIENT, borderColor: "transparent" }
+            : undefined
+        }
       >
-        {checked && <Icon name="check" className="text-[16px]" />}
+        {checked && <Icon name="check" className="text-white text-[16px]" />}
       </button>
       <span className="text-body-md text-on-surface-variant">{children}</span>
     </div>

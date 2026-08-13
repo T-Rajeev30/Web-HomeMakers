@@ -8,6 +8,7 @@ import CameraCapture from "../components/CameraCapture";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 function PhotoTile({ label, photo, onCamera, onFile }) {
   return (
@@ -15,13 +16,21 @@ function PhotoTile({ label, photo, onCamera, onFile }) {
       <p className="text-label-lg font-label-lg text-on-surface-variant mb-2">
         {label}
       </p>
-      <div className="aspect-video rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative aspect-video rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex flex-col items-center justify-center overflow-hidden">
         {photo ? (
-          <img
-            src={photo.url}
-            alt={label}
-            className="w-full h-full object-cover"
-          />
+          <>
+            <img
+              src={photo.url}
+              alt={label}
+              className="w-full h-full object-cover"
+            />
+            <span
+              className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center"
+              style={{ background: BRAND_GRADIENT }}
+            >
+              <Icon name="check" className="text-white text-[16px]" />
+            </span>
+          </>
         ) : (
           <Icon name="photo_camera" className="text-outline text-[32px]" />
         )}
@@ -158,17 +167,26 @@ export default function KitchenPhotos() {
     }
   };
 
+  const ready = locState === "ok" && kitchen && profile;
+
   return (
     <OnboardingLayout step={s.step} stepLabel={s.label}>
       <Card className="p-6 space-y-stack-lg">
-        <div>
-          <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">
-            Kitchen photos
-          </h2>
-          <p className="text-body-md text-on-surface-variant">
-            Use the live camera on any device, or upload an image. Location is
-            required for verification.
-          </p>
+        <div className="flex items-center gap-4">
+          <div
+            className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <Icon name="photo_camera" className="text-white text-[26px]" />
+          </div>
+          <div>
+            <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-1">
+              Kitchen photos
+            </h2>
+            <p className="text-body-md text-on-surface-variant">
+              Use the live camera, or upload an image. Location is required.
+            </p>
+          </div>
         </div>
 
         {locState === "loading" && (
@@ -215,8 +233,35 @@ export default function KitchenPhotos() {
         />
 
         {err && <p className="text-label-sm font-label-sm text-error">{err}</p>}
-        <Button full icon="arrow_forward" onClick={submit} disabled={saving}>
-          {saving ? "Uploading..." : "Continue.."}
+
+        {/* quick checklist so it's obvious what's still missing */}
+        <div className="flex flex-wrap gap-3 text-label-sm font-label-sm">
+          {[
+            ["Location", locState === "ok"],
+            ["Kitchen photo", !!kitchen],
+            ["Profile photo", !!profile],
+          ].map(([label, done]) => (
+            <span
+              key={label}
+              className="flex items-center gap-1"
+              style={{ color: done ? "#0fb59b" : "var(--on-surface-variant)" }}
+            >
+              <Icon
+                name={done ? "check_circle" : "radio_button_unchecked"}
+                className="text-[16px]"
+              />
+              {label}
+            </span>
+          ))}
+        </div>
+
+        <Button
+          full
+          icon="arrow_forward"
+          onClick={submit}
+          disabled={saving || !ready}
+        >
+          {saving ? "Uploading..." : "Continue"}
         </Button>
       </Card>
 
