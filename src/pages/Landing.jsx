@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import LaunchOfferModal from "../components/LaunchOfferModal";
 
 /* ============================================================================
    ZINGRO — BRAND TOKENS
@@ -291,6 +292,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
+  const [showLaunchOffer, setShowLaunchOffer] = useState(false);
   const [doorRef, doorOpen] = useReveal(0.35);
 
   useEffect(() => {
@@ -302,11 +304,26 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Launch offer — once per browser session, not on every reload/navigation
+  // back to the landing page. Clears when the tab/browser closes, so it
+  // resurfaces for a fresh visit (this is a live, time-bound promo).
+  useEffect(() => {
+    if (sessionStorage.getItem("zingro_launch_offer_seen")) return;
+    const t = setTimeout(() => {
+      setShowLaunchOffer(true);
+      sessionStorage.setItem("zingro_launch_offer_seen", "1");
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: C.cream, color: C.ink }}
     >
+      {showLaunchOffer && (
+        <LaunchOfferModal onClose={() => setShowLaunchOffer(false)} />
+      )}
       {/* ---------- HEADER ---------- */}
       <header
         className="w-full sticky top-0 z-30 transition-all duration-300"
