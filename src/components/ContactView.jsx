@@ -5,6 +5,7 @@ import Button from "./Button";
 import Icon from "./Icon";
 import { addMessage } from "../store/useMessages";
 import { contactInfo, faqs } from "../data/mock";
+import { BRAND_GRADIENT } from "../lib/brand";
 
 function FaqItem({ q, a, open, onToggle }) {
   return (
@@ -47,14 +48,22 @@ export default function ContactView() {
 
   return (
     <div className="space-y-stack-lg">
-      <section>
-        <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
-          Get in Touch
-        </h2>
-        <p className="text-body-md text-on-surface-variant">
-          We're here to help with anything you need.
-        </p>
-      </section>
+      <div className="flex items-center gap-4">
+        <div
+          className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
+          style={{ background: BRAND_GRADIENT }}
+        >
+          <Icon name="support_agent" className="text-white text-[26px]" />
+        </div>
+        <div>
+          <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+            Get in Touch
+          </h2>
+          <p className="text-body-md text-on-surface-variant">
+            We're here to help with anything you need.
+          </p>
+        </div>
+      </div>
 
       <Card className="p-4 flex flex-col gap-stack-sm">
         <a
@@ -78,11 +87,17 @@ export default function ContactView() {
       <Card className="p-5">
         {sent ? (
           <div className="flex flex-col items-center text-center py-stack-md">
-            <Icon
-              name="check_circle"
-              fill
-              className="text-primary text-[48px] mb-3"
-            />
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center mb-3"
+              style={{ backgroundColor: "#0fb59b1a" }}
+            >
+              <Icon
+                name="check_circle"
+                fill
+                className="text-[36px]"
+                style={{ color: "#0fb59b" }}
+              />
+            </div>
             <p className="text-label-lg font-label-lg text-on-surface mb-1">
               Message sent!
             </p>

@@ -12,7 +12,7 @@ const chipTone = {
   verification_pending: "pending",
   manual_review: "pending",
   approved: "success",
-  rejected: "neutral",
+  rejected: "error",
 };
 
 function Row({ label, value }) {
