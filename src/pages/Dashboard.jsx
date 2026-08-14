@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import Icon from "../components/Icon";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
+import LaunchOfferModal from "../components/LaunchOfferModal";
 
 function StatCard({
   icon,
@@ -112,6 +113,7 @@ export default function Dashboard() {
   const [status, setStatus] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showLaunchOffer, setShowLaunchOffer] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -124,6 +126,19 @@ export default function Dashboard() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  }, []);
+
+  // Launch offer — same session-scoped key as Landing.jsx, so a homemaker
+  // who somehow saw it there doesn't get it twice in the same session.
+  // Dashboard is where most homemakers actually land day to day, so this
+  // is the one that matters most in practice.
+  useEffect(() => {
+    if (sessionStorage.getItem("zingro_launch_offer_seen")) return;
+    const t = setTimeout(() => {
+      setShowLaunchOffer(true);
+      sessionStorage.setItem("zingro_launch_offer_seen", "1");
+    }, 700);
+    return () => clearTimeout(t);
   }, []);
 
   const banner = status ? BANNER_BY_STATUS[status.status] : null;
@@ -141,6 +156,10 @@ export default function Dashboard() {
 
   return (
     <main className="max-w-md mx-auto px-margin-mobile pt-stack-lg animate-fade-in">
+      {showLaunchOffer && (
+        <LaunchOfferModal onClose={() => setShowLaunchOffer(false)} />
+      )}
+
       <section className="mb-stack-lg">
         <h1 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
           Namaste{status?.name ? `, ${status.name}` : ""}!
