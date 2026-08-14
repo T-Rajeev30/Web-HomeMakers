@@ -14,16 +14,14 @@ const STATUS_TABS = [
   { value: "", label: "All" },
 ];
 
-// NOTE: rejected currently maps to the same "neutral" tone as draft, so the
-// two are visually indistinguishable in the list. Left as-is since I can't
-// confirm Chip supports an error/danger tone without its source — flagging
-// rather than guessing a tone string that might not exist.
+// Chip now has a real error tone (see Card.jsx) — no more collision
+// between rejected and draft.
 const chipTone = {
   draft: "neutral",
   verification_pending: "pending",
   manual_review: "pending",
   approved: "success",
-  rejected: "neutral",
+  rejected: "error",
 };
 
 export default function AdminCooksList() {

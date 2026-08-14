@@ -10,6 +10,7 @@ import { useOnboarding } from "../store/useOnboarding";
 import LegalModal, {
   TermsContent,
   PrivacyContent,
+  ChefPartnerTermsContent,
 } from "../components/LegalModal";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
@@ -20,7 +21,8 @@ export default function ReviewSubmit() {
   const d = useOnboarding();
   const [terms, setTerms] = useState(false);
   const [privacy, setPrivacy] = useState(false);
-  const [legal, setLegal] = useState(null); // "terms" | "privacy" | null
+  const [chefTerms, setChefTerms] = useState(false);
+  const [legal, setLegal] = useState(null); // "terms" | "privacy" | "chef" | null
   const [err, setErr] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -87,13 +89,22 @@ export default function ReviewSubmit() {
   const allComplete = incompleteCount === 0;
 
   const submit = async () => {
-    if (!terms || !privacy)
-      return setErr("Please accept the Terms and Privacy Policy to continue.");
+    if (!terms || !privacy || !chefTerms)
+      return setErr(
+        "Please accept the Terms of Use, Privacy Policy, and Chef Partner Terms to continue.",
+      );
 
     setErr("");
     setSubmitting(true);
     try {
-      await api.post("/api/onboarding/submit", { terms: true, privacy: true });
+      // NOTE: added `chefTerms` alongside the existing terms/privacy flags.
+      // Confirm the backend's /api/onboarding/submit handler actually
+      // records this third consent — it previously only tracked two.
+      await api.post("/api/onboarding/submit", {
+        terms: true,
+        privacy: true,
+        chefTerms: true,
+      });
       setVerification("submitted");
       navigate(s.next);
     } catch (error) {
@@ -177,12 +188,17 @@ export default function ReviewSubmit() {
       <div className="mt-stack-lg space-y-stack-md">
         <Consent checked={terms} onChange={setTerms}>
           I agree to the{" "}
-          <Link onClick={() => setLegal("terms")}>Terms &amp; Conditions</Link>
+          <Link onClick={() => setLegal("terms")}>Terms of Use</Link>
         </Consent>
         <Consent checked={privacy} onChange={setPrivacy}>
           I agree to the{" "}
           <Link onClick={() => setLegal("privacy")}>Privacy Policy</Link> and
           KYC verification
+        </Consent>
+        <Consent checked={chefTerms} onChange={setChefTerms}>
+          I agree to the{" "}
+          <Link onClick={() => setLegal("chef")}>Chef Partner Terms</Link>{" "}
+          governing my kitchen on Zingro
         </Consent>
         {err && <p className="text-label-sm font-label-sm text-error">{err}</p>}
         <Button full onClick={submit} disabled={submitting}>
@@ -191,13 +207,18 @@ export default function ReviewSubmit() {
       </div>
 
       {legal === "terms" && (
-        <LegalModal title="Terms & Conditions" onClose={() => setLegal(null)}>
+        <LegalModal title="Terms of Use" onClose={() => setLegal(null)}>
           <TermsContent />
         </LegalModal>
       )}
       {legal === "privacy" && (
         <LegalModal title="Privacy Policy" onClose={() => setLegal(null)}>
           <PrivacyContent />
+        </LegalModal>
+      )}
+      {legal === "chef" && (
+        <LegalModal title="Chef Partner Terms" onClose={() => setLegal(null)}>
+          <ChefPartnerTermsContent />
         </LegalModal>
       )}
     </OnboardingLayout>
