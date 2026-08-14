@@ -1,8 +1,8 @@
 import Icon from "./Icon";
 import LegalDocument from "./LegalDocument";
-import termsOfUseHtml from "../data/legal/terms-of-use.html?raw";
-import privacyPolicyHtml from "../data/legal/privacy-policy.html?raw";
-import chefPartnerTermsHtml from "../data/legal/chef-partner-terms.html?raw";
+import termsOfUseHtml from "../data/legal/Terms_of_use.html?raw";
+import privacyPolicyHtml from "../data/legal/Privacy_Policy.html?raw";
+import chefPartnerTermsHtml from "../data/legal/Chef_partner_terms.html?raw";
 
 /** Scrollable modal for Terms / Privacy / Chef Partner content. */
 export default function LegalModal({ title, onClose, children }) {
