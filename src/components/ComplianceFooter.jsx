@@ -65,8 +65,7 @@ export default function ComplianceFooter({ className = "" }) {
         </InfoBlock>
 
         <InfoBlock icon="apartment" title="Company Details">
-          Zingro is a registered sole proprietorship based in India, operated by
-          Kiran Kumar K.
+          Zingro is a registered sole proprietorship based in India.
         </InfoBlock>
 
         <InfoBlock icon="location_on" title="Registered Address">
