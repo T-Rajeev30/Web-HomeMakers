@@ -37,6 +37,87 @@ function Row({ label, value }) {
 }
 
 /**
+ * Derives a clear, plain-English list of exactly what's wrong with an
+ * application — so an admin doesn't have to piece it together by reading
+ * four separate verdict cards. Every reason here traces back to a real
+ * stored field; nothing is invented.
+ */
+function getFlaggedIssues(cook) {
+  const issues = [];
+
+  if (cook.tax?.verified === false) {
+    issues.push({
+      icon: "badge",
+      text: "PAN could not be verified with the issuing authority.",
+    });
+  } else if (cook.tax?.verified === true && cook.tax?.name_matched === false) {
+    issues.push({
+      icon: "badge",
+      text: "PAN is valid, but the name doesn't match what was entered.",
+    });
+  } else if (cook.tax?.verified === true && cook.tax?.dob_matched === false) {
+    issues.push({
+      icon: "badge",
+      text: "PAN is valid, but the date of birth doesn't match.",
+    });
+  }
+
+  if (cook.bank?.verified === false) {
+    issues.push({
+      icon: "account_balance",
+      text: cook.bank?.error_msg
+        ? `Bank verification failed: ${cook.bank.error_msg}`
+        : "Bank account could not be verified (penny-drop failed).",
+    });
+  } else if (
+    cook.bank?.verified === true &&
+    typeof cook.bank?.fuzzy_match_score === "number" &&
+    cook.bank.fuzzy_match_score < 85
+  ) {
+    issues.push({
+      icon: "account_balance",
+      text: `Bank account holder name only ${cook.bank.fuzzy_match_score}% matches — below the usual 85% bar.`,
+    });
+  }
+
+  if (cook.fssai?.manual_review_required === true) {
+    issues.push({
+      icon: "verified",
+      text: cook.fssai?.error_msg
+        ? `FSSAI: ${cook.fssai.error_msg}`
+        : "FSSAI license needs manual review — could not auto-confirm it's active.",
+    });
+  }
+
+  const aadhaarStatus = cook.aadhaar?.status;
+  if (
+    aadhaarStatus &&
+    !AADHAAR_SUCCESS_STATUSES.includes(aadhaarStatus) &&
+    AADHAAR_TERMINAL_STATUSES.includes(aadhaarStatus)
+  ) {
+    issues.push({
+      icon: "badge",
+      text: `Aadhaar verification ended as "${aadhaarStatus}" — did not succeed.`,
+    });
+  } else if (!aadhaarStatus || aadhaarStatus === "requested") {
+    issues.push({
+      icon: "badge",
+      text: "Aadhaar verification was never completed.",
+    });
+  }
+
+  const identityScore = cook.aadhaar?.identity_match_score;
+  if (typeof identityScore === "number" && identityScore < 0.85) {
+    issues.push({
+      icon: "compare_arrows",
+      text: `Aadhaar name ("${cook.aadhaar?.ocr_name || "?"}") only ${(identityScore * 100).toFixed(0)}% matches the name used for PAN — possible identity mismatch.`,
+    });
+  }
+
+  return issues;
+}
+
+/**
  * One KYC check, with the actual detail behind the pass/fail — not just
  * a bare checkmark. `detail` is a label→value list of the real fields
  * that produced the verdict, so an admin can see *why* something failed
@@ -134,6 +215,7 @@ export default function AdminCookDetail() {
   const aadhaarOk = AADHAAR_SUCCESS_STATUSES.includes(aadhaarStatus);
   const aadhaarUnknown =
     !aadhaarStatus || !AADHAAR_TERMINAL_STATUSES.includes(aadhaarStatus);
+  const flaggedIssues = getFlaggedIssues(cook);
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -153,6 +235,56 @@ export default function AdminCookDetail() {
             <Chip tone={chipTone[cook.status] || "neutral"}>{cook.status}</Chip>
           </div>
         </div>
+
+        {/* Plain-English summary of exactly what's wrong — read this first */}
+        {cook.status === "manual_review" && (
+          <Card
+            className="p-4 mb-stack-lg"
+            style={
+              flaggedIssues.length > 0
+                ? { borderColor: "var(--error, #dc2626)", borderWidth: 1.5 }
+                : { borderColor: "#0fb59b", borderWidth: 1.5 }
+            }
+          >
+            <h3 className="text-label-lg font-label-lg text-on-surface mb-2 flex items-center gap-2">
+              <Icon
+                name={flaggedIssues.length > 0 ? "flag" : "check_circle"}
+                fill
+                className="text-[18px]"
+                style={{
+                  color:
+                    flaggedIssues.length > 0
+                      ? "var(--error, #dc2626)"
+                      : "#0fb59b",
+                }}
+              />
+              {flaggedIssues.length > 0
+                ? `${flaggedIssues.length} issue${flaggedIssues.length > 1 ? "s" : ""} to review`
+                : "No automated issues found"}
+            </h3>
+            {flaggedIssues.length > 0 ? (
+              <ul className="flex flex-col gap-1.5">
+                {flaggedIssues.map((issue, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-body-md text-on-surface"
+                  >
+                    <Icon
+                      name={issue.icon}
+                      className="text-[16px] text-on-surface-variant mt-0.5 shrink-0"
+                    />
+                    {issue.text}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-body-md text-on-surface-variant">
+                All automated checks passed. This is likely queued for routine
+                manual review, not because something failed.
+              </p>
+            )}
+          </Card>
+        )}
 
         <div className="grid grid-cols-2 gap-stack-md mb-stack-lg">
           {cook.photoUrls?.kitchen && (
@@ -285,6 +417,17 @@ export default function AdminCookDetail() {
                             )
                           : "—",
                       ],
+                      ...(cook.aadhaar.ocr_name
+                        ? [["OCR name", cook.aadhaar.ocr_name]]
+                        : []),
+                      ...(typeof cook.aadhaar.identity_match_score === "number"
+                        ? [
+                            [
+                              "Identity match vs. PAN name",
+                              `${(cook.aadhaar.identity_match_score * 100).toFixed(0)}%`,
+                            ],
+                          ]
+                        : []),
                     ]
                   : []
               }
