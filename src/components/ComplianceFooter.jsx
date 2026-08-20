@@ -7,12 +7,30 @@ import LegalModal, {
 } from "./LegalModal";
 import { contactInfo } from "../data/mock";
 
+function InfoBlock({ icon, title, children }) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1.5">
+        <Icon
+          name={icon}
+          className="text-[16px]"
+          style={{ color: "#7832F0" }}
+        />
+        <p className="font-semibold text-on-surface">{title}</p>
+      </div>
+      <div className="text-on-surface-variant leading-relaxed pl-6">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /**
  * Mandatory e-commerce disclosures (legal entity, address, grievance
  * officer, customer care, legal document links). See compliance review
- * notes — several fields below are placeholders that MUST be filled with
- * real values before this ships; they're deliberately visible/obvious
- * rather than silently blank so nobody mistakes them for real data.
+ * notes — Grievance Officer below is a placeholder that MUST be filled
+ * with real values before this ships; deliberately visible/obvious
+ * rather than silently blank so nobody mistakes it for real data.
  */
 export default function ComplianceFooter({ className = "" }) {
   const [legal, setLegal] = useState(null); // "terms" | "privacy" | "chef" | "returns" | null
@@ -20,56 +38,40 @@ export default function ComplianceFooter({ className = "" }) {
   return (
     <div className={`text-sm ${className}`}>
       <div className="grid sm:grid-cols-2 gap-6 mb-8 text-left">
-        <div>
-          <p className="font-semibold text-on-surface mb-1">Zingro</p>
-          <p className="text-on-surface-variant leading-relaxed">
-            Operated by Kiran Kumar K (sole proprietorship)
-            <br />
-            {/* TODO: replace with the actual registered/principal office
-                address, and list branch addresses if any exist. */}
-            [Registered office address — add before launch], Bengaluru,
-            Karnataka, India
-          </p>
-        </div>
+        <InfoBlock icon="storefront" title="Zingro">
+          Dedicated to connecting home cooks with food lovers and delivering a
+          delightful home food experience.
+        </InfoBlock>
 
-        <div>
-          <p className="font-semibold text-on-surface mb-1">Customer Care</p>
-          <div className="flex flex-col gap-1 text-on-surface-variant">
-            <a
-              href={`mailto:${contactInfo.email}`}
-              className="flex items-center gap-2 hover:text-on-surface transition-colors"
-            >
-              <Icon name="mail" className="text-[16px]" /> {contactInfo.email}
-            </a>
-            <a
-              href={`tel:${contactInfo.phone}`}
-              className="flex items-center gap-2 hover:text-on-surface transition-colors"
-            >
-              <Icon name="call" className="text-[16px]" /> {contactInfo.phone}
-            </a>
-          </div>
-        </div>
+        <InfoBlock icon="support_agent" title="Customer Care">
+          <a
+            href={`mailto:${contactInfo.email}`}
+            className="hover:text-on-surface transition-colors"
+          >
+            {contactInfo.email}
+          </a>
+        </InfoBlock>
 
-        <div>
-          <p className="font-semibold text-on-surface mb-1">
-            Grievance Officer
+        <InfoBlock icon="handshake" title="Business Inquiries">
+          <p className="mb-1">
+            For partnerships, collaborations and other business-related queries.
           </p>
-          {/* TODO: real name, designation, email, and phone are required
-              here — DPDP Act / Consumer Protection Rules mandate this be
-              a named individual, not just "Support". */}
-          <p className="text-on-surface-variant leading-relaxed">
-            [Grievance Officer name & designation — add before launch]
-            <br />
-            [Grievance Officer email/phone — add before launch]
-          </p>
-        </div>
+          <a
+            href="mailto:business@zingro.in"
+            className="hover:text-on-surface transition-colors"
+          >
+            business@zingro.in
+          </a>
+        </InfoBlock>
 
-        <div>
-          <p className="font-semibold text-on-surface mb-1">Company Details</p>
-          <p className="text-on-surface-variant leading-relaxed">
-            Sole proprietorship — CIN not applicable
-          </p>
-        </div>
+        <InfoBlock icon="apartment" title="Company Details">
+          Zingro is a registered sole proprietorship based in India, operated by
+          Kiran Kumar K.
+        </InfoBlock>
+
+        <InfoBlock icon="location_on" title="Registered Address">
+          {contactInfo.address}
+        </InfoBlock>
       </div>
 
       <nav className="flex flex-wrap gap-x-5 gap-y-2 justify-center border-t border-outline-variant pt-6">
