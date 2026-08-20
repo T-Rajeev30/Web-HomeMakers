@@ -24,18 +24,59 @@ function Row({ label, value }) {
   );
 }
 
-function Verdict({ label, ok }) {
+/**
+ * One KYC check, with the actual detail behind the pass/fail — not just
+ * a bare checkmark. `detail` is a label→value list of the real fields
+ * that produced the verdict, so an admin can see *why* something failed
+ * without leaving this screen.
+ */
+function VerdictCard({ label, ok, unknown, detail = [] }) {
+  const state = unknown ? "unknown" : ok ? "ok" : "fail";
+  const styles = {
+    ok: { icon: "check_circle", color: "#0fb59b", bg: "#0fb59b14" },
+    fail: {
+      icon: "cancel",
+      color: "var(--error, #dc2626)",
+      bg: "var(--error-container, #fde3e3)",
+    },
+    unknown: {
+      icon: "help",
+      color: "var(--on-surface-variant, #6b5c45)",
+      bg: "var(--surface-container-high, #f0eae0)",
+    },
+  }[state];
+
   return (
-    <div className="flex items-center gap-2">
-      <Icon
-        name={ok ? "check_circle" : "cancel"}
-        fill
-        className="text-[18px]"
-        style={{ color: ok ? "#0fb59b" : "var(--error, #dc2626)" }}
-      />
-      <span className="text-label-sm font-label-sm text-on-surface-variant">
-        {label}
-      </span>
+    <div className="rounded-xl p-3.5" style={{ backgroundColor: styles.bg }}>
+      <div className="flex items-center gap-2 mb-1.5">
+        <Icon
+          name={styles.icon}
+          fill
+          className="text-[18px]"
+          style={{ color: styles.color }}
+        />
+        <span className="text-label-lg font-label-lg text-on-surface">
+          {label}
+        </span>
+      </div>
+      {detail.length > 0 ? (
+        <div className="pl-[26px] flex flex-col gap-0.5">
+          {detail.map(([k, v]) => (
+            <p
+              key={k}
+              className="text-label-sm font-label-sm text-on-surface-variant"
+            >
+              <span className="opacity-70">{k}:</span> {v ?? "—"}
+            </p>
+          ))}
+        </div>
+      ) : (
+        unknown && (
+          <p className="pl-[26px] text-label-sm font-label-sm text-on-surface-variant">
+            Step not completed yet
+          </p>
+        )
+      )}
     </div>
   );
 }
@@ -76,6 +117,10 @@ export default function AdminCookDetail() {
     return <p className="p-6 text-body-md text-on-surface-variant">Loading…</p>;
   if (err && !cook) return <p className="p-6 text-body-md text-error">{err}</p>;
   if (!cook) return null;
+
+  const aadhaarStatus = cook.aadhaar?.status;
+  const aadhaarOk = aadhaarStatus === "verified";
+  const aadhaarUnknown = !aadhaarStatus || aadhaarStatus === "requested";
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -132,24 +177,124 @@ export default function AdminCookDetail() {
               .filter(Boolean)
               .join(" · ")}
           />
-          <Row label="PAN (masked)" value={cook.tax?.masked} />
-          <Row label="Bank A/C (masked)" value={cook.bank?.masked} />
-          <Row label="FSSAI (masked)" value={cook.fssai?.license_masked} />
         </Card>
 
         <Card className="p-4 mb-stack-lg">
           <h3 className="text-label-lg font-label-lg text-on-surface mb-3">
             KYC Verdicts
           </h3>
-          <div className="space-y-2">
-            <Verdict label="PAN verified" ok={cook.tax?.verified} />
-            <Verdict label="Bank penny-drop OK" ok={cook.bank?.penny_drop_ok} />
-            <Verdict label="FSSAI active" ok={cook.fssai?.active} />
+          <div className="flex flex-col gap-2.5">
+            <VerdictCard
+              label="PAN"
+              ok={
+                cook.tax?.verified === true && cook.tax?.name_matched === true
+              }
+              unknown={cook.tax?.verified == null}
+              detail={
+                cook.tax?.masked
+                  ? [
+                      ["PAN", cook.tax.masked],
+                      ["Name match", cook.tax.name_matched ? "Yes" : "No"],
+                      ["DOB match", cook.tax.dob_matched ? "Yes" : "No"],
+                      ...(cook.tax.status ? [["Status", cook.tax.status]] : []),
+                      ...(cook.tax.remarks
+                        ? [["Remarks", cook.tax.remarks]]
+                        : []),
+                    ]
+                  : []
+              }
+            />
+
+            <VerdictCard
+              label="Bank Account"
+              ok={cook.bank?.verified === true}
+              unknown={cook.bank?.verified == null}
+              detail={
+                cook.bank?.masked
+                  ? [
+                      ["Account", cook.bank.masked],
+                      ["IFSC", cook.bank.ifsc],
+                      [
+                        "Name match",
+                        typeof cook.bank.fuzzy_match_score === "number"
+                          ? `${cook.bank.fuzzy_match_score}%`
+                          : "—",
+                      ],
+                      ...(cook.bank.name_with_bank
+                        ? [["Name on bank record", cook.bank.name_with_bank]]
+                        : []),
+                      ...(cook.bank.error_msg
+                        ? [["Error", cook.bank.error_msg]]
+                        : []),
+                    ]
+                  : []
+              }
+            />
+
+            <VerdictCard
+              label="FSSAI License"
+              ok={
+                cook.fssai?.active === true &&
+                cook.fssai?.manual_review_required === false
+              }
+              unknown={cook.fssai?.active == null}
+              detail={
+                cook.fssai?.license_masked
+                  ? [
+                      ["License", cook.fssai.license_masked],
+                      ["Registered name", cook.fssai.registered_name],
+                      ["Expiry", cook.fssai.expiry],
+                      ...(cook.fssai.status_desc
+                        ? [["Status", cook.fssai.status_desc]]
+                        : []),
+                      [
+                        "Needs manual review",
+                        cook.fssai.manual_review_required ? "Yes" : "No",
+                      ],
+                    ]
+                  : []
+              }
+            />
+
+            <VerdictCard
+              label="Aadhaar (Digio)"
+              ok={aadhaarOk}
+              unknown={aadhaarUnknown}
+              detail={
+                cook.aadhaar?.request_id
+                  ? [
+                      ["Status", aadhaarStatus || "—"],
+                      [
+                        "Last updated",
+                        cook.aadhaar.updated_at
+                          ? new Date(cook.aadhaar.updated_at).toLocaleString(
+                              "en-IN",
+                            )
+                          : "—",
+                      ],
+                    ]
+                  : []
+              }
+            />
           </div>
-          {cook.kyc?.name_match_score != null && (
-            <p className="text-label-sm font-label-sm text-on-surface-variant mt-3">
-              Name match score: {(cook.kyc.name_match_score * 100).toFixed(1)}%
-            </p>
+
+          {cook.kycVerdict ? (
+            <div className="mt-4 pt-4 border-t border-outline-variant flex items-center justify-between">
+              <span className="text-label-sm font-label-sm text-on-surface-variant">
+                Computed verdict:{" "}
+                <strong className="text-on-surface">
+                  {cook.kycVerdict.decision}
+                </strong>
+                {" · "}score {(cook.kycVerdict.score * 100).toFixed(1)}%
+              </span>
+            </div>
+          ) : (
+            cook.kyc?.name_match_score != null && (
+              <p className="text-label-sm font-label-sm text-on-surface-variant mt-3">
+                Name match score: {(cook.kyc.name_match_score * 100).toFixed(1)}
+                %
+              </p>
+            )
           )}
         </Card>
 

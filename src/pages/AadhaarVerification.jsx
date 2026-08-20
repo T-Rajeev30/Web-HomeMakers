@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import OnboardingLayout from "../components/OnboardingLayout";
 import { Card } from "../components/Card";
@@ -16,14 +16,53 @@ const HOW_IT_WORKS = [
   { icon: "task_alt", text: "We verify instantly and you're done" },
 ];
 
+const POLL_INTERVAL_MS = 2000;
+const POLL_MAX_ATTEMPTS = 10; // ~20s total — the webhook usually lands in a couple of seconds
+
 export default function AadhaarVerification() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("idle"); // idle | starting | in_progress | done | error
   const [err, setErr] = useState("");
+  const pollAttempts = useRef(0);
+
+  // Polls /confirm until the backend reports the webhook actually landed.
+  // The client-side Digio callback firing is NOT proof of verification —
+  // only the server-to-server webhook is authoritative, so this polls
+  // rather than trusting a single confirm() call.
+  const pollForConfirmation = async () => {
+    try {
+      const { data } = await api.post("/api/onboarding/aadhaar/confirm");
+
+      if (data.status === "verified") {
+        saveStep("aadhaar", { verified: true });
+        setStatus("done");
+        showToast("success", "Aadhaar verified successfully");
+        return;
+      }
+
+      pollAttempts.current += 1;
+      if (pollAttempts.current >= POLL_MAX_ATTEMPTS) {
+        setStatus("error");
+        setErr(
+          "Verification is taking longer than expected. It may still complete shortly — please check back in a minute, or try again.",
+        );
+        return;
+      }
+
+      setTimeout(pollForConfirmation, POLL_INTERVAL_MS);
+    } catch (error) {
+      setStatus("error");
+      setErr(
+        error.response?.data?.error ||
+          "Failed to confirm Aadhaar verification.",
+      );
+    }
+  };
 
   const startVerification = async () => {
     setStatus("starting");
     setErr("");
+    pollAttempts.current = 0;
     try {
       const { data } = await api.post("/api/onboarding/aadhaar/create-request");
 
@@ -32,27 +71,24 @@ export default function AadhaarVerification() {
         is_iframe: false,
         logo: "https://zingro.in/logo.png",
         theme: { primaryColor: "#ff6b00", secondaryColor: "#7832f0" },
-        callback: async (response) => {
+        callback: (response) => {
           if (response?.error_code) {
             setStatus("error");
             setErr(response.message || "Aadhaar verification failed.");
             showToast("error", "Aadhaar verification failed.");
           } else {
-            try {
-              await api.post("/api/onboarding/aadhaar/confirm");
-            } catch (e) {
-              // non-fatal — webhook will eventually reconcile this if it's registered
-            }
-            saveStep("aadhaar", { verified: true });
-            setStatus("done");
-            showToast("success", "Aadhaar verified successfully");
+            // Digio's client-side callback fired successfully — this means
+            // the user completed the flow, but the server-side webhook
+            // (the actual source of truth) may not have landed yet.
+            // Start polling rather than assuming success.
+            setStatus("in_progress");
+            pollForConfirmation();
           }
         },
       });
 
       digio.init();
       digio.submit(data.kycId, data.customerIdentifier);
-      setStatus("in_progress");
     } catch (error) {
       setStatus("error");
       setErr(
@@ -133,7 +169,7 @@ export default function AadhaarVerification() {
               style={{ background: BRAND_GRADIENT }}
             />
             <span className="text-label-lg font-label-lg">
-              Waiting for verification to complete…
+              Confirming with Digio — this can take a few seconds…
             </span>
           </div>
         )}
