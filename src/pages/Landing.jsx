@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import LaunchOfferModal from "../components/LaunchOfferModal";
+import ComplianceFooter from "../components/ComplianceFooter";
 
 /* ============================================================================
    ZINGRO — BRAND TOKENS
@@ -248,15 +249,15 @@ const homemakerJourney = [
   },
   {
     n: "06",
-    t: "You get paid directly",
-    d: "Payouts go straight to your bank account. No middleman in between.",
+    t: "You get paid on schedule",
+    d: "Zingro settles your earnings to your bank account each cycle, net of commission and any statutory deductions, in line with the Chef Partner Terms.",
   },
 ];
 
 const customerJourney = [
   "A hungry neighbour opens Zingro",
   "Discovers a home kitchen nearby",
-  "Sees who is actually cooking",
+  "Views the Chef Partner's approved profile",
   "Orders a real, home-cooked meal",
   "Food arrives — the kitchen earns",
 ];
@@ -571,9 +572,9 @@ export default function Landing() {
               className="text-3xl md:text-[44px] leading-[1.05] mb-4"
               style={{ fontWeight: 800, letterSpacing: "-0.02em" }}
             >
-              Your kitchen.
+              Run your kitchen,
               <br />
-              Your terms.
+              within Zingro's Terms.
             </h2>
           </Reveal>
 
@@ -681,8 +682,8 @@ export default function Landing() {
               have to mean unknown.
             </h2>
             <p className="text-white/65 text-base md:text-lg leading-relaxed max-w-lg mb-12">
-              Before a kitchen opens its door to the neighbourhood, we make sure
-              people know who's behind it.
+              Before a kitchen goes live, we verify who's behind it — every Chef
+              Partner is checked before they can take an order.
             </p>
           </Reveal>
 
@@ -698,7 +699,7 @@ export default function Landing() {
               ],
               [
                 "Transparent payouts",
-                "Clear commission, paid straight to your bank — no hidden deductions.",
+                "Commission is disclosed upfront, with any permitted deductions itemised in your settlement statement.",
               ],
             ].map(([t, d], i) => (
               <Reveal key={t} direction="up" delay={i * 80}>
@@ -946,7 +947,8 @@ export default function Landing() {
                 className="text-white/80 text-sm mt-6"
                 style={{ fontWeight: 600 }}
               >
-                Free to join · Verified · Manage everything from your phone
+                Free to join · KYC & FSSAI verified · Manage everything from
+                your phone
               </p>
             </div>
           </Reveal>
@@ -958,7 +960,7 @@ export default function Landing() {
         className="mt-auto w-full border-t"
         style={{ borderColor: `${C.ink}14` }}
       >
-        <div className="max-w-6xl mx-auto px-6 md:px-10 py-10 flex flex-col items-center gap-3 text-center">
+        <div className="max-w-4xl mx-auto px-6 md:px-10 py-10 flex flex-col items-center gap-6 text-center">
           <img
             src="/logo.png"
             alt="Zingro"
@@ -971,6 +973,7 @@ export default function Landing() {
           >
             Contact & Support
           </button>
+          <ComplianceFooter className="w-full" />
           <p className="text-sm" style={{ color: `${C.ink}80` }}>
             © {new Date().getFullYear()} Zingro. All rights reserved.
           </p>
