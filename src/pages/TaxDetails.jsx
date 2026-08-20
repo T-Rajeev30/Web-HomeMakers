@@ -7,7 +7,7 @@ import Button from "../components/Button";
 import Icon from "../components/Icon";
 import ValidityHint from "../components/ValidityHint";
 import { STEPS } from "../data/onboarding";
-import { saveStep } from "../store/useOnboarding";
+import { saveStep, useOnboarding } from "../store/useOnboarding";
 import api from "../services/api";
 import { showToast } from "../store/useToast";
 import { BRAND_GRADIENT } from "../lib/brand";
@@ -26,6 +26,12 @@ function toDigioDob(isoDate) {
 export default function TaxDetails() {
   const navigate = useNavigate();
   const s = STEPS.tax;
+  const d = useOnboarding();
+  // Pre-fill from Personal Information as a starting point, but this is
+  // editable — it's the name PAN gets verified against, and it needs to
+  // match the PAN card exactly, which may differ from how they typed
+  // their name earlier (middle name, initials, spelling, etc).
+  const [panName, setPanName] = useState(d.personal?.name || "");
   const [pan, setPan] = useState("");
   const [gst, setGst] = useState("");
   const [dob, setDob] = useState(""); // native input value, yyyy-MM-dd
@@ -42,6 +48,10 @@ export default function TaxDetails() {
         ? "Valid PAN format"
         : `${pan.length}/10 characters`;
 
+  const nameState = panName.trim().length === 0 ? "error" : "neutral";
+  const nameHint =
+    "Must match your PAN card exactly, including middle name or initials";
+
   const gstValid = gst.length === 0 || GST_RE.test(gst);
   const gstState =
     gst.length === 0 ? "neutral" : gstValid ? "success" : "error";
@@ -54,6 +64,8 @@ export default function TaxDetails() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (!panName.trim())
+      return setErr("Enter your name exactly as it appears on your PAN card.");
     if (!PAN_RE.test(pan))
       return setErr("Enter a valid PAN (e.g. ABCDE1234F).");
     if (!dob) return setErr("Date of birth is required for PAN verification.");
@@ -65,7 +77,7 @@ export default function TaxDetails() {
     try {
       const res = await api.post("/api/onboarding/draft", {
         step: "tax",
-        data: { pan, gst, dob: toDigioDob(dob) },
+        data: { pan, gst, dob: toDigioDob(dob), name: panName.trim() },
       });
       if (res.data.verification) {
         showToast(
@@ -75,7 +87,7 @@ export default function TaxDetails() {
             : "PAN could not be verified — will need manual review",
         );
       }
-      saveStep("tax", { pan, gst, dob });
+      saveStep("tax", { pan, gst, dob, name: panName.trim() });
       navigate(s.next);
     } catch (error) {
       setErr(
@@ -109,6 +121,21 @@ export default function TaxDetails() {
         </div>
 
         <form className="space-y-stack-lg" onSubmit={submit}>
+          <div>
+            <TextField
+              label="Full Name (as per PAN card)"
+              id="pan-name"
+              placeholder="e.g. Sunita Devi Sharma"
+              value={panName}
+              onChange={(e) => setPanName(e.target.value)}
+              required
+            />
+            <ValidityHint
+              state={nameState === "error" && !panName ? "error" : "neutral"}
+              text={nameHint}
+            />
+          </div>
+
           <div>
             <TextField
               label="PAN Number"
