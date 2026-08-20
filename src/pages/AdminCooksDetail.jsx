@@ -15,6 +15,18 @@ const chipTone = {
   rejected: "error",
 };
 
+// Digio's real terminal-success status is "approved" — there is no
+// "verified" value in their API. Checking both for backward compatibility
+// with any records written before this was discovered.
+const AADHAAR_SUCCESS_STATUSES = ["approved", "verified"];
+const AADHAAR_TERMINAL_STATUSES = [
+  "approved",
+  "verified",
+  "rejected",
+  "failed",
+  "expired",
+];
+
 function Row({ label, value }) {
   return (
     <div className="py-stack-sm border-b border-outline-variant last:border-0">
@@ -119,8 +131,9 @@ export default function AdminCookDetail() {
   if (!cook) return null;
 
   const aadhaarStatus = cook.aadhaar?.status;
-  const aadhaarOk = aadhaarStatus === "verified";
-  const aadhaarUnknown = !aadhaarStatus || aadhaarStatus === "requested";
+  const aadhaarOk = AADHAAR_SUCCESS_STATUSES.includes(aadhaarStatus);
+  const aadhaarUnknown =
+    !aadhaarStatus || !AADHAAR_TERMINAL_STATUSES.includes(aadhaarStatus);
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">

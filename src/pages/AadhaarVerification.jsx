@@ -17,7 +17,7 @@ const HOW_IT_WORKS = [
 ];
 
 const POLL_INTERVAL_MS = 2000;
-const POLL_MAX_ATTEMPTS = 10; // ~20s total — the webhook usually lands in a couple of seconds
+const POLL_MAX_ATTEMPTS = 10; // ~20s total
 
 export default function AadhaarVerification() {
   const navigate = useNavigate();
@@ -25,10 +25,9 @@ export default function AadhaarVerification() {
   const [err, setErr] = useState("");
   const pollAttempts = useRef(0);
 
-  // Polls /confirm until the backend reports the webhook actually landed.
-  // The client-side Digio callback firing is NOT proof of verification —
-  // only the server-to-server webhook is authoritative, so this polls
-  // rather than trusting a single confirm() call.
+  // Polls /confirm, which now actively asks Digio for the real status
+  // rather than depending solely on their webhook. Stops immediately on
+  // an explicit failure instead of always waiting out the full timeout.
   const pollForConfirmation = async () => {
     try {
       const { data } = await api.post("/api/onboarding/aadhaar/confirm");
@@ -37,6 +36,13 @@ export default function AadhaarVerification() {
         saveStep("aadhaar", { verified: true });
         setStatus("done");
         showToast("success", "Aadhaar verified successfully");
+        return;
+      }
+
+      if (data.status === "failed") {
+        setStatus("error");
+        setErr(data.message || "Aadhaar verification failed.");
+        showToast("error", "Aadhaar verification failed.");
         return;
       }
 
@@ -77,10 +83,9 @@ export default function AadhaarVerification() {
             setErr(response.message || "Aadhaar verification failed.");
             showToast("error", "Aadhaar verification failed.");
           } else {
-            // Digio's client-side callback fired successfully — this means
-            // the user completed the flow, but the server-side webhook
-            // (the actual source of truth) may not have landed yet.
-            // Start polling rather than assuming success.
+            // Digio's client-side callback fired — the user completed the
+            // flow on their end. Now actively confirm with our backend,
+            // which asks Digio's own status API for the real answer.
             setStatus("in_progress");
             pollForConfirmation();
           }
