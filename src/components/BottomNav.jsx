@@ -6,7 +6,7 @@ const items = [
   { to: "/dashboard", icon: "dashboard", label: "Dashboard" },
   { to: "/orders", icon: "receipt_long", label: "Orders" },
   { to: "/menu", icon: "restaurant_menu", label: "Menu" },
-  { to: "/plans", icon: "subscriptions", label: "Plans" },
+  // { to: "/plans", icon: "subscriptions", label: "Plans" },
   { to: "/profile", icon: "person", label: "Profile" },
 ];
 

@@ -16,7 +16,11 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/otp", { state: { name, phone } });
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length !== 10) {
+      return; // TODO: surface inline error via TextField error state
+    }
+    navigate("/otp", { state: { name, phone: digits } });
   };
 
   return (
