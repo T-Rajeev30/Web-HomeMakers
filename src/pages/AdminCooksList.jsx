@@ -7,15 +7,12 @@ import { BRAND_GRADIENT } from "../lib/brand";
 
 const STATUS_TABS = [
   { value: "manual_review", label: "Manual Review" },
-  { value: "verification_pending", label: "Pending KYC" },
   { value: "approved", label: "Approved" },
   { value: "rejected", label: "Rejected" },
   { value: "draft", label: "Draft" },
   { value: "", label: "All" },
 ];
 
-// Chip now has a real error tone (see Card.jsx) — no more collision
-// between rejected and draft.
 const chipTone = {
   draft: "neutral",
   verification_pending: "pending",
@@ -24,24 +21,31 @@ const chipTone = {
   rejected: "error",
 };
 
+const LIMIT = 20;
+
 export default function AdminCooksList() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("manual_review");
+  const [page, setPage] = useState(1);
   const [data, setData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+
+  useEffect(() => setPage(1), [status]);
 
   useEffect(() => {
     setLoading(true);
     setErr("");
     api
       .get("/api/admin/cooks", {
-        params: { status: status || undefined, page: 1, limit: 20 },
+        params: { status: status || undefined, page, limit: LIMIT },
       })
       .then((res) => setData(res.data))
       .catch((e) => setErr(e.response?.data?.error || "Failed to load cooks."))
       .finally(() => setLoading(false));
-  }, [status]);
+  }, [status, page]);
+
+  const totalPages = Math.ceil((data.total || 0) / LIMIT);
 
   return (
     <main className="px-margin-mobile pt-stack-md pb-stack-lg animate-fade-in">
@@ -114,13 +118,35 @@ export default function AdminCooksList() {
               </span>
               <span>
                 {c.kyc?.decision
-                  ? `Match ${(c.kyc.name_match_score * 100).toFixed(0)}% · ${c.kyc.decision}`
+                  ? `${c.currentStep >= 8 ? "Submitted" : `Step ${c.currentStep}/8`} · ${c.kyc.decision}`
                   : "KYC pending"}
               </span>
             </div>
           </Card>
         ))}
       </section>
+
+      {!loading && data.total > LIMIT && (
+        <div className="flex items-center justify-between mt-stack-lg">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant disabled:opacity-40 transition-opacity"
+          >
+            Previous
+          </button>
+          <span className="text-label-sm font-label-sm text-on-surface-variant">
+            Page {page} of {totalPages} · {data.total} total
+          </span>
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant disabled:opacity-40 transition-opacity"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </main>
   );
 }
