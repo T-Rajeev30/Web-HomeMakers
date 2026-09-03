@@ -189,7 +189,7 @@ export const categories = [
 export const contactInfo = {
   email: "support@zingro.in",
   phone: "+91 98765 43210",
-  address: "WeWork Latitude, Bengaluru, Karnataka 560001",
+  address: "WeWork Latitude, Bengaluru, Karnataka 560024",
 };
 
 export const faqs = [
