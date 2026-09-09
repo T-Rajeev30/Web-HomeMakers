@@ -11,6 +11,14 @@ import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
 
+// Bengaluru Urban + Rural district pincode range. Covers outer areas
+// like Hoskote (562114) and Yelahanka (562149), not just core 560xxx.
+const isBengaluruPincode = (p) => {
+  if (p.length !== 6) return false;
+  const n = Number(p);
+  return n >= 560000 && n <= 563999;
+};
+
 export default function AddressDetails() {
   const navigate = useNavigate();
   const s = STEPS.address;
@@ -21,19 +29,27 @@ export default function AddressDetails() {
   const pincodeState =
     pincode.length === 0
       ? "neutral"
-      : pincode.length === 6
+      : pincode.length === 6 && isBengaluruPincode(pincode)
         ? "success"
         : "error";
   const pincodeHint =
     pincode.length === 0
       ? "6-digit postal code"
-      : pincode.length === 6
-        ? "Looks good"
-        : `${pincode.length}/6 digits`;
+      : pincode.length < 6
+        ? `${pincode.length}/6 digits`
+        : isBengaluruPincode(pincode)
+          ? "Looks good"
+          : "Zingro currently only serves Bengaluru";
 
   const submit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!isBengaluruPincode(e.target.pincode.value)) {
+      setError("Sorry, Zingro currently only operates in Bengaluru.");
+      return;
+    }
+
     setSaving(true);
     const f = e.target;
     const data = {
@@ -95,7 +111,7 @@ export default function AddressDetails() {
               id="pincode"
               inputMode="numeric"
               maxLength={6}
-              placeholder="e.g. 400050"
+              placeholder="e.g. 560001"
               value={pincode}
               onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
               required
@@ -114,7 +130,7 @@ export default function AddressDetails() {
             full
             icon="arrow_forward"
             type="submit"
-            disabled={saving || pincode.length !== 6}
+            disabled={saving || !isBengaluruPincode(pincode)}
           >
             {saving ? "Saving..." : "Continue"}
           </Button>
