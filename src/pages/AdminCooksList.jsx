@@ -23,14 +23,16 @@ const chipTone = {
 
 const LIMIT = 20;
 
-function RemindButton({ cookId }) {
-  const [state, setState] = useState("idle");
+function RemindButton({ cookId, initialCount = 0 }) {
+  const [state, setState] = useState("idle"); // idle | sending | sent | error
+  const [count, setCount] = useState(initialCount);
 
   const send = async (e) => {
     e.stopPropagation();
     setState("sending");
     try {
-      await api.post(`/api/admin/cooks/${cookId}/remind`);
+      const { data } = await api.post(`/api/admin/cooks/${cookId}/remind`);
+      setCount(data.reminderCount);
       setState("sent");
     } catch {
       setState("error");
@@ -40,16 +42,23 @@ function RemindButton({ cookId }) {
   return (
     <button
       onClick={send}
-      disabled={state === "sending" || state === "sent"}
-      className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm disabled:opacity-60 active:scale-[0.98] transition-all"
+      disabled={state === "sending"}
+      className={`mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg text-label-sm font-label-sm disabled:opacity-60 active:scale-[0.98] transition-all ${
+        state === "sent"
+          ? "bg-tertiary-fixed text-tertiary"
+          : state === "error"
+            ? "bg-error-container text-error"
+            : "bg-surface-container-high text-on-surface-variant"
+      }`}
     >
       <Icon
-        name={state === "sent" ? "check" : "mail"}
+        name={state === "sent" ? "check_circle" : "mail"}
         className="text-[16px]"
       />
-      {state === "idle" && "Send reminder"}
+      {state === "idle" &&
+        (count > 0 ? `Send reminder (sent ${count}x)` : "Send reminder")}
       {state === "sending" && "Sending..."}
-      {state === "sent" && "Reminder sent"}
+      {state === "sent" && `Reminder sent (${count}x total)`}
       {state === "error" && "Failed — retry"}
     </button>
   );
@@ -164,7 +173,10 @@ export default function AdminCooksList() {
               </span>
             </div>
             {c.status === "draft" && c.currentStep < 8 && (
-              <RemindButton cookId={c._id} />
+              <RemindButton
+                cookId={c._id}
+                initialCount={c.reminderCount || 0}
+              />
             )}
           </Card>
         ))}
