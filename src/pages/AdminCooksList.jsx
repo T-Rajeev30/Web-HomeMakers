@@ -23,6 +23,38 @@ const chipTone = {
 
 const LIMIT = 20;
 
+function RemindButton({ cookId }) {
+  const [state, setState] = useState("idle"); // idle | sending | sent | error
+
+  const send = async (e) => {
+    e.stopPropagation(); // don't trigger the card's onClick navigation
+    setState("sending");
+    try {
+      await api.post(`/api/admin/cooks/${cookId}/remind`);
+      setState("sent");
+    } catch {
+      setState("error");
+    }
+  };
+
+  return (
+    <button
+      onClick={send}
+      disabled={state === "sending" || state === "sent"}
+      className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm disabled:opacity-60 active:scale-[0.98] transition-all"
+    >
+      <Icon
+        name={state === "sent" ? "check" : "mail"}
+        className="text-[16px]"
+      />
+      {state === "idle" && "Send reminder"}
+      {state === "sending" && "Sending..."}
+      {state === "sent" && "Reminder sent"}
+      {state === "error" && "Failed — retry"}
+    </button>
+  );
+}
+
 export default function AdminCooksList() {
   const navigate = useNavigate();
   const [status, setStatus] = useState("manual_review");
@@ -122,6 +154,9 @@ export default function AdminCooksList() {
                   : "KYC pending"}
               </span>
             </div>
+            {c.status === "draft" && c.currentStep < 8 && (
+              <RemindButton cookId={c._id} />
+            )}
           </Card>
         ))}
       </section>
