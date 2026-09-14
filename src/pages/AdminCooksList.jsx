@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, Chip } from "../components/Card";
 import Icon from "../components/Icon";
 import api from "../services/api";
@@ -24,10 +24,10 @@ const chipTone = {
 const LIMIT = 20;
 
 function RemindButton({ cookId }) {
-  const [state, setState] = useState("idle"); // idle | sending | sent | error
+  const [state, setState] = useState("idle");
 
   const send = async (e) => {
-    e.stopPropagation(); // don't trigger the card's onClick navigation
+    e.stopPropagation();
     setState("sending");
     try {
       await api.post(`/api/admin/cooks/${cookId}/remind`);
@@ -57,13 +57,22 @@ function RemindButton({ cookId }) {
 
 export default function AdminCooksList() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState("manual_review");
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const status = searchParams.get("status") ?? "manual_review";
+  const page = Number(searchParams.get("page")) || 1;
+
   const [data, setData] = useState({ items: [], total: 0 });
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
 
-  useEffect(() => setPage(1), [status]);
+  const setStatus = (newStatus) => {
+    setSearchParams({ status: newStatus, page: "1" });
+  };
+
+  const setPage = (newPage) => {
+    setSearchParams({ status, page: String(newPage) });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -165,7 +174,7 @@ export default function AdminCooksList() {
         <div className="flex items-center justify-between mt-stack-lg">
           <button
             disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
+            onClick={() => setPage(page - 1)}
             className="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant disabled:opacity-40 transition-opacity"
           >
             Previous
@@ -175,7 +184,7 @@ export default function AdminCooksList() {
           </span>
           <button
             disabled={page >= totalPages}
-            onClick={() => setPage((p) => p + 1)}
+            onClick={() => setPage(page + 1)}
             className="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant disabled:opacity-40 transition-opacity"
           >
             Next
