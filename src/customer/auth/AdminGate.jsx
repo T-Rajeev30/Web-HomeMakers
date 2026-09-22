@@ -1,22 +1,23 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useClaims, hasAdmin, clearToken } from "./session";
+import { claims, isAdmin, clearSession } from "./session";
 
 export default function AdminGate({ children }) {
   const loc = useLocation();
-  const claims = useClaims();
+  const c = claims();
 
-  if (!claims)
+  if (!c || c._expired)
     return <Navigate to="/customer/login" state={{ from: loc }} replace />;
 
-  if (!hasAdmin(claims)) {
+  if (!isAdmin(c)) {
     return (
       <div className="zc-locked">
         <span className="material-symbols-rounded">lock</span>
         <h1>Restricted preview</h1>
         <p>This build is limited to Zingro admin accounts.</p>
         <button
+          className="zc-btn"
           onClick={() => {
-            clearToken();
+            clearSession();
             window.location.replace("/customer/login");
           }}
         >
