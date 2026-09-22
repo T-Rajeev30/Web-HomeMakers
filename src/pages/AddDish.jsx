@@ -34,6 +34,7 @@ export default function AddDish() {
     category: "",
     price: "",
     desc: "",
+    tag: "",
   });
   const [photo, setPhoto] = useState(null); // { url, file }
   const [camOpen, setCamOpen] = useState(false);
@@ -60,6 +61,7 @@ export default function AddDish() {
         category: form.category,
         price: Number(form.price),
         desc: form.desc.trim(),
+        tag: form.tag,
         ...(imageKey && { imageKey }),
       });
       navigate("/menu");
@@ -144,6 +146,44 @@ export default function AddDish() {
           />
 
           <div>
+            <p className="block mb-2 text-label-lg font-label-lg text-on-surface-variant">
+              Type
+            </p>
+            <div className="flex gap-3">
+              {[
+                { value: "veg", label: "Veg", color: "#0fb59b" },
+                { value: "non-veg", label: "Non-Veg", color: "#dc2626" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, tag: opt.value }))}
+                  className={`flex-1 h-touch-target-min rounded-lg border-2 flex items-center justify-center gap-2 text-label-lg font-label-lg transition-all active:scale-[0.98] ${
+                    form.tag === opt.value
+                      ? "border-current"
+                      : "border-outline-variant text-on-surface-variant"
+                  }`}
+                  style={
+                    form.tag === opt.value
+                      ? { color: opt.color, borderColor: opt.color }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="w-3.5 h-3.5 rounded-full border-2"
+                    style={{
+                      borderColor: opt.color,
+                      backgroundColor:
+                        form.tag === opt.value ? opt.color : "transparent",
+                    }}
+                  />
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <label
               htmlFor="category"
               className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
@@ -202,7 +242,7 @@ export default function AddDish() {
             </div>
           )}
 
-          <Button full type="submit" disabled={saving}>
+          <Button full type="submit" disabled={saving || !form.tag}>
             {saving ? "Saving..." : "Create Dish"}
           </Button>
         </form>
