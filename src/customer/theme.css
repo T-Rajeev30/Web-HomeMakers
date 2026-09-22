@@ -247,3 +247,48 @@
   color: var(--zc-text-dim);
   text-align: center;
 }
+
+.zc-address-row {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--zc-s3);
+  padding: var(--zc-s3);
+  margin-bottom: var(--zc-s2);
+  cursor: pointer;
+}
+.zc-row-sm {
+  padding: 2px 0;
+}
+.zc-total {
+  padding-top: var(--zc-s2);
+  margin-top: var(--zc-s2);
+  border-top: 1px solid var(--zc-border);
+}
+.zc-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--zc-border);
+  color: var(--zc-text);
+}
+.zc-order-row {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--zc-s3);
+  text-decoration: none;
+  color: var(--zc-text);
+}
+.zc-status {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--zc-r-pill);
+  background: var(--zc-surface-2);
+  text-transform: capitalize;
+  width: fit-content;
+}
+.zc-status-delivered,
+.zc-status-completed {
+  color: #4ade80;
+}
+.zc-status-rejected {
+  color: var(--zc-coral);
+}
