@@ -58,3 +58,118 @@
   background: var(--zc-bg);
   color: var(--zc-text);
 }
+
+.zc-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+.zc-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--zc-s4);
+  border-bottom: 1px solid var(--zc-border);
+}
+.zc-brand {
+  font-weight: 700;
+  background: var(--zc-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.zc-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--zc-s3);
+}
+.zc-icon-btn {
+  background: none;
+  border: 0;
+  color: var(--zc-text);
+}
+.zc-content {
+  flex: 1;
+  padding: var(--zc-s4);
+  padding-bottom: 88px;
+}
+.zc-tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--zc-surface);
+  border-top: 1px solid var(--zc-border);
+}
+.zc-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--zc-s2) 0;
+  color: var(--zc-text-dim);
+  font-size: 11px;
+  text-decoration: none;
+}
+.zc-tab-active {
+  color: var(--zc-pink);
+}
+.zc-dim {
+  color: var(--zc-text-dim);
+  font-size: 13px;
+}
+.zc-error {
+  color: var(--zc-coral);
+}
+.zc-auth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zc-s3);
+  max-width: 360px;
+  margin: 15dvh auto 0;
+  padding: 0 var(--zc-s4);
+}
+.zc-input {
+  background: var(--zc-surface-2);
+  border: 1px solid var(--zc-border);
+  color: var(--zc-text);
+  border-radius: var(--zc-r-sm);
+  padding: 12px 14px;
+}
+.zc-link {
+  background: none;
+  border: 0;
+  color: var(--zc-text-dim);
+  text-decoration: underline;
+}
+.zc-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zc-s5);
+}
+.zc-row-scroll {
+  display: flex;
+  gap: var(--zc-s3);
+  overflow-x: auto;
+  padding-bottom: var(--zc-s2);
+}
+.zc-kitchen-card,
+.zc-dish-card {
+  min-width: 160px;
+  padding: var(--zc-s3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--zc-text);
+}
+.zc-thumb {
+  aspect-ratio: 4/3;
+  border-radius: var(--zc-r-sm);
+}
+.zc-grad-fallback {
+  background: var(--zc-grad);
+  opacity: 0.35;
+}
