@@ -8,7 +8,9 @@ const Login = lazy(() => import("./screens/Login"));
 const Home = lazy(() => import("./screens/Home"));
 const CookMenu = lazy(() => import("./screens/CookMenu"));
 const Cart = lazy(() => import("./screens/Cart"));
-
+const Checkout = lazy(() => import("./screens/Checkout"));
+const Orders = lazy(() => import("./screens/Orders"));
+const OrderDetail = lazy(() => import("./screens/OrderDetail"));
 export default function CustomerRoutes() {
   return (
     <div className="zc-root" data-zc>
@@ -25,6 +27,9 @@ export default function CustomerRoutes() {
             <Route index element={<Home />} />
             <Route path="cook/:id" element={<CookMenu />} />
             <Route path="cart" element={<Cart />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<OrderDetail />} />
             {/* search, checkout, orders, orders/:id, profile */}
             {/* search, menu/:id, cart, checkout, orders, orders/:id, profile */}
           </Route>
