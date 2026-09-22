@@ -1,4 +1,4 @@
-:root[data-zc] {
+.zc-root {
   --zc-bg: #0b0b0f;
   --zc-surface: #15151c;
   --zc-surface-2: #1e1e28;
@@ -24,9 +24,7 @@
   --zc-s6: 32px;
   --zc-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
   --zc-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-}
 
-.zc-root {
   background: var(--zc-bg);
   color: var(--zc-text);
   min-height: 100dvh;
@@ -58,7 +56,6 @@
   background: var(--zc-bg);
   color: var(--zc-text);
 }
-
 .zc-shell {
   display: flex;
   flex-direction: column;
