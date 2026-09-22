@@ -1,7 +1,8 @@
 import { useSyncExternalStore } from "react";
 import api from "../services/api";
+import { showToast } from "./useToast";
 
-let state = { dishes: [], loading: true, error: "" };
+let state = { dishes: [], loading: true, error: "", savingId: null };
 const listeners = new Set();
 const emit = () => listeners.forEach((l) => l());
 const subscribe = (l) => (listeners.add(l), () => listeners.delete(l));
@@ -31,18 +32,43 @@ export async function addDish(payload) {
   return data;
 }
 
+export async function updateDish(id, payload) {
+  const { data } = await api.patch(`/api/menu/${id}`, payload);
+  setState({ dishes: state.dishes.map((d) => (d._id === id ? data : d)) });
+  return data;
+}
+
 export async function toggleDish(id) {
   const dish = state.dishes.find((d) => d._id === id);
   if (!dish) return;
-  const { data } = await api.patch(`/api/menu/${id}`, {
-    available: !dish.available,
-  });
-  setState({ dishes: state.dishes.map((d) => (d._id === id ? data : d)) });
+  setState({ savingId: id });
+  try {
+    const { data } = await api.patch(`/api/menu/${id}`, {
+      available: !dish.available,
+    });
+    setState({
+      dishes: state.dishes.map((d) => (d._id === id ? data : d)),
+      savingId: null,
+    });
+  } catch (e) {
+    setState({ savingId: null });
+    showToast("error", e.response?.data?.error || "Failed to update dish.");
+  }
 }
 
 export async function deleteDish(id) {
-  await api.delete(`/api/menu/${id}`);
-  setState({ dishes: state.dishes.filter((d) => d._id !== id) });
+  setState({ savingId: id });
+  try {
+    await api.delete(`/api/menu/${id}`);
+    setState({
+      dishes: state.dishes.filter((d) => d._id !== id),
+      savingId: null,
+    });
+    showToast("success", "Dish deleted.");
+  } catch (e) {
+    setState({ savingId: null });
+    showToast("error", e.response?.data?.error || "Failed to delete dish.");
+  }
 }
 
 export function useDishes() {

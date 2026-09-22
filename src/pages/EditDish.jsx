@@ -1,37 +1,75 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import TopAppBar from "../components/TopAppBar";
 import TextField from "../components/TextField";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import CameraCapture from "../components/CameraCapture";
 import CategorySelect from "../components/CategorySelect";
-import { addDish } from "../store/useDishes";
+import { useDishes, fetchDishes, updateDish } from "../store/useDishes";
 import { uploadPhoto } from "../lib/uploadPhoto";
 import { BRAND_GRADIENT } from "../lib/brand";
 
-export default function AddDish() {
+export default function EditDish() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    desc: "",
-    tag: "",
-    discount: "",
-    spicyLevel: "0",
-  });
+  const { dishes, loading } = useDishes();
+  const dish = dishes.find((d) => d._id === id);
+
+  const [form, setForm] = useState(null);
   const [category, setCategory] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [camOpen, setCamOpen] = useState(false);
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    if (dishes.length === 0 && loading) fetchDishes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (dish && !form) {
+      setForm({
+        name: dish.name,
+        price: String(dish.price),
+        desc: dish.desc || "",
+        tag: dish.tag || "",
+        discount: dish.discount ? String(dish.discount) : "",
+        spicyLevel: String(dish.spicyLevel ?? 0),
+      });
+      if (dish.categoryId)
+        setCategory({ _id: dish.categoryId, name: dish.category });
+    }
+  }, [dish, form]);
+
+  if (loading && !dish) {
+    return (
+      <div className="min-h-screen flex flex-col bg-surface">
+        <TopAppBar showBack title="Menu" />
+        <p className="text-center text-on-surface-variant py-16 text-body-md">
+          Loading…
+        </p>
+      </div>
+    );
+  }
+
+  if (!dish || !form) {
+    return (
+      <div className="min-h-screen flex flex-col bg-surface">
+        <TopAppBar showBack title="Menu" />
+        <p className="text-center text-on-surface-variant py-16 text-body-md">
+          Dish not found.
+        </p>
+      </div>
+    );
+  }
+
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const onFile = (file) => setPhoto({ url: URL.createObjectURL(file), file });
 
   const validate = () => {
     if (!form.name.trim()) return "Dish name is required.";
-    if (!category) return "Please select a category.";
     if (!form.tag) return "Please select Veg or Non-Veg.";
     const price = Number(form.price);
     if (!Number.isFinite(price) || price <= 0) return "Enter a valid price.";
@@ -49,10 +87,9 @@ export default function AddDish() {
       let imageKey;
       if (photo) imageKey = await uploadPhoto("dish", photo.file);
 
-      await addDish({
+      await updateDish(id, {
         name: form.name.trim(),
-        category: category.name,
-        categoryId: category._id,
+        ...(category && { category: category.name, categoryId: category._id }),
         price: Number(form.price),
         desc: form.desc.trim(),
         tag: form.tag,
@@ -65,12 +102,14 @@ export default function AddDish() {
       setErr(
         error.response?.data?.error ||
           error.response?.data?.details?.[0]?.message ||
-          "Failed to add dish. Please try again.",
+          "Failed to update dish. Please try again.",
       );
     } finally {
       setSaving(false);
     }
   };
+
+  const previewUrl = photo?.url || dish.imageUrl;
 
   return (
     <div className="min-h-screen flex flex-col bg-surface">
@@ -81,22 +120,22 @@ export default function AddDish() {
             className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center"
             style={{ background: BRAND_GRADIENT }}
           >
-            <Icon name="add_circle" className="text-white text-[26px]" />
+            <Icon name="edit" className="text-white text-[26px]" />
           </div>
           <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
-            Add New Dish
+            Edit Dish
           </h2>
         </div>
 
         <form className="space-y-stack-lg" onSubmit={submit}>
           <div>
             <p className="text-label-lg font-label-lg text-on-surface-variant mb-2">
-              Dish Photo (Optional)
+              Dish Photo
             </p>
             <div className="aspect-video rounded-xl border-2 border-dashed border-outline-variant bg-surface-container-lowest flex items-center justify-center overflow-hidden">
-              {photo ? (
+              {previewUrl ? (
                 <img
-                  src={photo.url}
+                  src={previewUrl}
                   alt="Dish"
                   className="w-full h-full object-cover"
                 />
@@ -113,7 +152,7 @@ export default function AddDish() {
                 onClick={() => setCamOpen(true)}
                 className="flex-1 h-10 text-label-sm"
               >
-                {photo ? "Retake" : "Open camera"}
+                Retake
               </Button>
               <label className="flex-1">
                 <span className="inline-flex w-full items-center justify-center gap-2 h-10 px-4 rounded-lg bg-surface-container-lowest text-on-surface border border-outline-variant text-label-sm font-label-lg cursor-pointer active:scale-[0.98] transition-all">
@@ -137,7 +176,6 @@ export default function AddDish() {
             id="name"
             value={form.name}
             onChange={set("name")}
-            placeholder="e.g. Veg Thali"
             required
           />
 
@@ -179,7 +217,11 @@ export default function AddDish() {
             </div>
           </div>
 
-          <CategorySelect value={category?._id} onChange={setCategory} />
+          <CategorySelect
+            value={category?._id}
+            onChange={setCategory}
+            required={false}
+          />
 
           <TextField
             label="Price (₹)"
@@ -187,7 +229,6 @@ export default function AddDish() {
             inputMode="numeric"
             value={form.price}
             onChange={set("price")}
-            placeholder="0.00"
             required
           />
 
@@ -233,7 +274,6 @@ export default function AddDish() {
               value={form.desc}
               onChange={set("desc")}
               rows={3}
-              placeholder="Dish description"
               className="w-full px-4 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
             />
           </div>
@@ -246,7 +286,7 @@ export default function AddDish() {
           )}
 
           <Button full type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Create Dish"}
+            {saving ? "Saving..." : "Save Changes"}
           </Button>
         </form>
       </main>

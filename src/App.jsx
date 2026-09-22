@@ -29,8 +29,8 @@ import VerificationApproved from "./pages/VerificationApproved";
 import VerificationRejected from "./pages/VerificationRejected";
 import DocumentReupload from "./pages/DocumentReupload";
 
-import ManageCategories from "./pages/ManageCategories";
 import AddDish from "./pages/AddDish";
+import EditDish from "./pages/EditDish";
 
 import CreatePlan from "./pages/CreatePlan";
 
@@ -61,7 +61,7 @@ export default function App() {
         <Route path="/document-upload" element={<DocumentUpload />} />
         {/* App shell (with bottom nav + drawer) */}
         <Route element={<ProtectedRoute />}>
-          {/* App screens â€” full layout with bottom navigation */}
+          {/* App screens — full layout with bottom navigation */}
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/orders" element={<Orders />} />
@@ -72,7 +72,7 @@ export default function App() {
             <Route path="/billing" element={<Billing />} />
           </Route>
 
-          {/* Onboarding & verification â€” no bottom navigation */}
+          {/* Onboarding & verification — no bottom navigation */}
           <Route path="/address-details" element={<AddressDetails />} />
           <Route path="/tax-details" element={<TaxDetails />} />
           <Route path="/bank-details" element={<BankDetails />} />
@@ -99,10 +99,12 @@ export default function App() {
             element={<VerificationRejected />}
           />
           <Route path="/document-reupload" element={<DocumentReupload />} />
+
+          {/* Menu — full-screen forms, no bottom nav */}
+          <Route path="/menu/add" element={<AddDish />} />
+          <Route path="/menu/edit/:id" element={<EditDish />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
-        <Route path="/menu/add" element={<AddDish />} />
-        <Route path="/menu/categories" element={<ManageCategories />} />
         <Route path="/contact" element={<ContactPublic />} />
         <Route path="/support" element={<Contact />} />
         <Route path="/plans/new" element={<CreatePlan />} />

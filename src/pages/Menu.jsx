@@ -10,11 +10,12 @@ import {
 } from "../store/useDishes";
 import { BRAND_GRADIENT } from "../lib/brand";
 
-function Toggle({ checked, onChange }) {
+function Toggle({ checked, onChange, disabled }) {
   return (
     <button
       onClick={onChange}
-      className="relative w-11 h-6 rounded-full transition-colors"
+      disabled={disabled}
+      className="relative w-11 h-6 rounded-full transition-colors disabled:opacity-50"
       style={{ background: checked ? BRAND_GRADIENT : undefined }}
       data-checked={checked}
     >
@@ -31,7 +32,7 @@ function Toggle({ checked, onChange }) {
 }
 
 export default function Menu() {
-  const { dishes, loading, error } = useDishes();
+  const { dishes, loading, error, savingId } = useDishes();
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -39,42 +40,34 @@ export default function Menu() {
     fetchDishes();
   }, []);
 
-  const filtered = dishes.filter((d) =>
-    d.name.toLowerCase().includes(query.toLowerCase()),
-  );
+  const filtered = dishes.filter((d) => {
+    const q = query.toLowerCase();
+    return (
+      d.name.toLowerCase().includes(q) || d.category?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <main className="px-margin-mobile pt-stack-md space-y-stack-lg animate-fade-in pb-32">
-      <section className="flex justify-between items-start">
-        <div>
-          <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
-            Menu Management
-          </h2>
-          <p className="text-on-surface-variant font-body-md">
-            Manage your daily home-cooked offerings
-          </p>
-        </div>
+      <section>
+        <h2 className="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+          Menu Management
+        </h2>
+        <p className="text-on-surface-variant font-body-md">
+          Manage your daily home-cooked offerings
+        </p>
       </section>
-      <section className="flex gap-stack-sm items-center">
-        <div className="relative flex-grow">
-          <Icon
-            name="search"
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]"
-          />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search dishes..."
-            className="w-full h-touch-target-min pl-12 pr-4 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-          />
-        </div>
-        <button
-          onClick={() => navigate("/menu/categories")}
-          aria-label="Manage categories"
-          className="w-touch-target-min h-touch-target-min flex items-center justify-center bg-surface-container border border-outline-variant rounded-xl active:scale-95 transition-transform"
-        >
-          <Icon name="category" className="text-on-surface-variant" />
-        </button>
+      <section className="relative">
+        <Icon
+          name="search"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]"
+        />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search dishes or categories..."
+          className="w-full h-touch-target-min pl-12 pr-4 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+        />
       </section>
 
       {error && (
@@ -113,9 +106,16 @@ export default function Menu() {
             </div>
             <div className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-start">
-                <h3 className="text-headline-md font-headline-md text-on-surface">
-                  {dish.name}
-                </h3>
+                <div>
+                  <h3 className="text-headline-md font-headline-md text-on-surface">
+                    {dish.name}
+                  </h3>
+                  {dish.category && (
+                    <span className="text-label-sm font-label-sm text-on-surface-variant">
+                      {dish.category}
+                    </span>
+                  )}
+                </div>
                 <span className="text-headline-md font-headline-md text-primary">
                   ₹{dish.price}
                 </span>
@@ -130,14 +130,19 @@ export default function Menu() {
                   </span>
                   <Toggle
                     checked={dish.available}
+                    disabled={savingId === dish._id}
                     onChange={() => toggleDish(dish._id)}
                   />
                 </div>
                 <div className="flex items-center gap-1">
-                  <button className="flex items-center gap-1 text-primary font-label-lg px-2 py-1 rounded-lg hover:bg-surface-container-high transition-colors">
+                  <button
+                    onClick={() => navigate(`/menu/edit/${dish._id}`)}
+                    className="flex items-center gap-1 text-primary font-label-lg px-2 py-1 rounded-lg hover:bg-surface-container-high transition-colors"
+                  >
                     <Icon name="edit" className="text-[20px]" /> Edit
                   </button>
                   <button
+                    disabled={savingId === dish._id}
                     onClick={(e) => {
                       e.stopPropagation();
                       if (
@@ -146,7 +151,7 @@ export default function Menu() {
                         deleteDish(dish._id);
                       }
                     }}
-                    className="flex items-center gap-1 text-error font-label-lg px-2 py-1 rounded-lg hover:bg-error-container transition-colors"
+                    className="flex items-center gap-1 text-error font-label-lg px-2 py-1 rounded-lg hover:bg-error-container transition-colors disabled:opacity-50"
                   >
                     <Icon name="delete" className="text-[20px]" />
                   </button>
