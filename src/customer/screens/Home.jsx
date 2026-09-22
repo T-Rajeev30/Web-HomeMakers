@@ -1,18 +1,29 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { catalog } from "../api/services";
+import { catalog, addresses as addrApi } from "../api/services";
 
 export default function Home() {
   const [data, setData] = useState(null);
   const [err, setErr] = useState("");
 
   useEffect(() => {
+    addrApi
+      .list()
+      .then((list) => {
+        const def = list.find((a) => a.isDefault) || list[0];
+        if (def) return load({ addressId: def._id });
+        useGeoThenLoad();
+      })
+      .catch(() => useGeoThenLoad());
+  }, []);
+
+  function useGeoThenLoad() {
     navigator.geolocation?.getCurrentPosition(
       (pos) => load({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       () => load({}),
       { timeout: 4000 },
     ) ?? load({});
-  }, []);
+  }
 
   async function load(params) {
     try {
