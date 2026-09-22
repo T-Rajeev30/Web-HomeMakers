@@ -5,11 +5,12 @@ import { Card } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import CameraCapture from "../components/CameraCapture";
+import { uploadPhoto } from "../lib/uploadPhoto";
 import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
-import { uploadPhoto } from "../lib/uploadPhoto";
+
 function PhotoTile({ label, photo, onCamera, onFile }) {
   return (
     <div>
@@ -64,24 +65,6 @@ function PhotoTile({ label, photo, onCamera, onFile }) {
       </div>
     </div>
   );
-}
-
-// Normalize to a type S3/backend accepts; default to jpeg if unrecognized.
-const normalizeContentType = (type) =>
-  type === "image/png" ? "image/png" : "image/jpeg";
-
-async function uploadPhoto(type, file) {
-  const contentType = normalizeContentType(file.type);
-  const { data: presignData } = await api.post("/api/uploads/presign", {
-    type,
-    contentType,
-  });
-  await fetch(presignData.url, {
-    method: "PUT",
-    headers: { "Content-Type": contentType },
-    body: file,
-  });
-  await api.post("/api/uploads/confirm", { type, key: presignData.key });
 }
 
 // location: "loading" | "ok" | "denied"
