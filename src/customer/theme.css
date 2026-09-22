@@ -170,3 +170,80 @@
   background: var(--zc-grad);
   opacity: 0.35;
 }
+
+.zc-toast {
+  color: var(--zc-pink);
+  font-size: 13px;
+}
+.zc-section-title {
+  text-transform: capitalize;
+  color: var(--zc-text-dim);
+  font-size: 14px;
+  margin-bottom: var(--zc-s2);
+}
+.zc-dish-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zc-s2);
+}
+.zc-dish-row {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--zc-s3);
+  padding: var(--zc-s3);
+}
+.zc-thumb-sm {
+  width: 56px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+}
+.zc-dish-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.zc-btn-sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+.zc-row-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.zc-stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zc-s2);
+}
+.zc-cart-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--zc-s3);
+}
+.zc-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--zc-s3);
+}
+.zc-stepper button {
+  background: var(--zc-surface-2);
+  border: 1px solid var(--zc-border);
+  color: var(--zc-text);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--zc-r-sm);
+}
+.zc-summary {
+  padding: var(--zc-s4);
+}
+.zc-empty {
+  display: grid;
+  place-content: center;
+  gap: var(--zc-s2);
+  min-height: 50dvh;
+  color: var(--zc-text-dim);
+  text-align: center;
+}
