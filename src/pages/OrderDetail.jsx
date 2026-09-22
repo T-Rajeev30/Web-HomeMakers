@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card, Chip } from "../components/Card";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
+import CameraCapture from "../components/CameraCapture";
 import { useOrder, fetchOrders, updateOrderStatus } from "../store/useOrders";
+import { uploadPhoto } from "../lib/uploadPhoto";
 import {
   FLOW,
   statusMeta,
@@ -28,6 +30,7 @@ export default function OrderDetail() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [err, setErr] = useState("");
+  const [camOpen, setCamOpen] = useState(false);
 
   useEffect(() => {
     fetchOrders().finally(() => setLoading(false));
@@ -61,14 +64,36 @@ export default function OrderDetail() {
   const activeIndex = FLOW.indexOf(order.status);
   const isRejected = order.status === "rejected";
 
-  const update = async (status) => {
+  const update = async (status, readyPhoto) => {
     setErr("");
     setUpdating(true);
     try {
-      await updateOrderStatus(order._id, status);
+      await updateOrderStatus(order._id, status, readyPhoto);
       if (status === "rejected" || status === "completed") navigate("/orders");
     } catch (e) {
       setErr(e.response?.data?.error || "Failed to update order.");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handlePrimaryAction = () => {
+    if (action.next === "ready") {
+      setCamOpen(true); // mandatory photo gate before "ready"
+    } else {
+      update(action.next);
+    }
+  };
+
+  const handleReadyPhoto = async (file) => {
+    setCamOpen(false);
+    setErr("");
+    setUpdating(true);
+    try {
+      const key = await uploadPhoto("orderReady", file);
+      await update("ready", key);
+    } catch (e) {
+      setErr(e.response?.data?.error || "Failed to upload photo.");
     } finally {
       setUpdating(false);
     }
@@ -137,15 +162,11 @@ export default function OrderDetail() {
                     )}
                     <Icon
                       name={s.icon}
-                      className={`relative text-[20px] ${
-                        done ? "text-white" : "text-outline"
-                      }`}
+                      className={`relative text-[20px] ${done ? "text-white" : "text-outline"}`}
                     />
                   </div>
                   <span
-                    className={`text-label-sm font-label-sm ${
-                      done ? "text-on-surface" : "text-outline"
-                    }`}
+                    className={`text-label-sm font-label-sm ${done ? "text-on-surface" : "text-outline"}`}
                   >
                     {s.label}
                   </span>
@@ -238,7 +259,7 @@ export default function OrderDetail() {
             </Button>
             <Button
               full
-              onClick={() => update(action.next)}
+              onClick={handlePrimaryAction}
               icon={action.icon}
               iconRight={false}
               disabled={updating}
@@ -249,7 +270,7 @@ export default function OrderDetail() {
         ) : action ? (
           <Button
             full
-            onClick={() => update(action.next)}
+            onClick={handlePrimaryAction}
             icon={action.icon}
             iconRight={false}
             disabled={updating}
@@ -264,6 +285,14 @@ export default function OrderDetail() {
           </Card>
         )}
       </div>
+
+      {camOpen && (
+        <CameraCapture
+          title="Photo proof — order ready"
+          onCapture={handleReadyPhoto}
+          onClose={() => setCamOpen(false)}
+        />
+      )}
     </main>
   );
 }

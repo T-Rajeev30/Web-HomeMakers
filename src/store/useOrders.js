@@ -27,8 +27,9 @@ export async function fetchOrders() {
   }
 }
 
-export async function updateOrderStatus(id, status) {
-  const { data } = await api.patch(`/api/cook/orders/${id}/status`, { status });
+export async function updateOrderStatus(id, status, readyPhoto) {
+  const body = readyPhoto ? { status, readyPhoto } : { status };
+  const { data } = await api.patch(`/api/cook/orders/${id}/status`, body);
   setState({ orders: state.orders.map((o) => (o._id === id ? data : o)) });
   return data;
 }

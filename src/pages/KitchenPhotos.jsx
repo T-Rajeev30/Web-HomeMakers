@@ -9,7 +9,7 @@ import { STEPS } from "../data/onboarding";
 import { saveStep } from "../store/useOnboarding";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
-
+import { uploadPhoto } from "../lib/uploadPhoto";
 function PhotoTile({ label, photo, onCamera, onFile }) {
   return (
     <div>
