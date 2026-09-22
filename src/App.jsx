@@ -45,6 +45,7 @@ import AdminCookDetail from "./pages/AdminCooksDetail";
 import AdminRoute from "./routes/AdminRoutes";
 import Landing from "./pages/Landing";
 import AadhaarVerification from "./pages/AadhaarVerification";
+import CustomerRoutes from "./customer/CustomerRoutes";
 export default function App() {
   return (
     <>
@@ -76,7 +77,10 @@ export default function App() {
           <Route path="/tax-details" element={<TaxDetails />} />
           <Route path="/bank-details" element={<BankDetails />} />
           <Route path="/fssai-details" element={<FssaiDetails />} />
-        <Route path="/aadhaar-verification" element={<AadhaarVerification />} />
+          <Route
+            path="/aadhaar-verification"
+            element={<AadhaarVerification />}
+          />
           <Route path="/about-food" element={<AboutFood />} />
           <Route path="/kitchen-photos" element={<KitchenPhotos />} />
           <Route path="/kitchen-information" element={<KitchenInformation />} />
@@ -106,6 +110,7 @@ export default function App() {
           <Route path="/admin/cooks" element={<AdminCooksList />} />
           <Route path="/admin/cooks/:id" element={<AdminCookDetail />} />
         </Route>
+        <Route path="/customer/*" element={<CustomerRoutes />} />
       </Routes>
     </>
   );

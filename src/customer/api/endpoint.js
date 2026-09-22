@@ -1,0 +1,40 @@
+export const EP = {
+  // Zingro-Auth (own envelope: { success, statusCode, message, data })
+  sendOtp: "/auth-api/api/v1/auth/mobile/send-otp",
+  verifyOtp: "/auth-api/api/v1/auth/mobile/verify-otp",
+  refresh: "/auth-api/api/v1/auth/refresh",
+  me: "/auth-api/api/v1/auth/me",
+  profile: "/auth-api/api/v1/auth/profile",
+  logout: "/auth-api/api/v1/auth/logout",
+
+  // wrapped { success, message, data }
+  home: "/api/v1/home",
+  search: "/api/v1/search",
+  addresses: "/api/v1/addresses",
+  checkout: "/api/v1/checkout/preview",
+  payCreate: "/api/v1/payment/create-order",
+  payVerify: "/api/v1/payment/verify",
+  delivery: (id) => `/api/v1/delivery/${id}`,
+  wishlist: "/api/v1/wishlist",
+  coupons: "/api/v1/coupons",
+  couponVal: "/api/v1/coupons/validate",
+  reviewsFor: (cookId) => `/api/v1/reviews/cook/${cookId}`,
+  reviewOrder: (orderId) => `/api/v1/reviews/order/${orderId}`,
+  subs: "/api/v1/subscriptions",
+  subsDue: "/api/v1/subscriptions/due-today",
+  faqs: "/api/v1/support/faqs",
+  tickets: "/api/v1/support/tickets",
+  refCode: "/api/v1/referral/my-code",
+
+  // RAW — no envelope
+  cooks: "/api/public/cooks",
+  cookMenu: (id) => `/api/public/cooks/${id}/menu`,
+  cuisines: "/api/public/cuisines",
+  cart: "/api/cart",
+  cartItems: "/api/cart/items",
+  cartItem: (dishId) => `/api/cart/items/${dishId}`,
+  orders: "/api/orders",
+  ordersMine: "/api/orders/mine",
+  order: (id) => `/api/orders/${id}`,
+  orderCancel: (id) => `/api/orders/${id}/cancel`,
+};
