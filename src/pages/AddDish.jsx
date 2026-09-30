@@ -5,59 +5,125 @@ import TextField from "../components/TextField";
 import Button from "../components/Button";
 import Icon from "../components/Icon";
 import CameraCapture from "../components/CameraCapture";
-import CategorySelect from "../components/CategorySelect";
 import { addDish } from "../store/useDishes";
-import { uploadPhoto } from "../lib/uploadPhoto";
+import { categories } from "../data/mock";
+import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
+
+const normalizeContentType = (type) =>
+  type === "image/png" ? "image/png" : "image/jpeg";
+
+async function uploadDishImage(file) {
+  const contentType = normalizeContentType(file.type);
+  const { data } = await api.post("/api/uploads/presign", {
+    type: "dish",
+    contentType,
+  });
+  await fetch(data.url, {
+    method: "PUT",
+    headers: { "Content-Type": contentType },
+    body: file,
+  });
+  return data.key;
+}
+
+function ListEditor({ label, placeholder, items, setItems }) {
+  const update = (i, value) => {
+    const next = [...items];
+    next[i] = value;
+    setItems(next);
+  };
+  const add = () => setItems([...items, ""]);
+  const remove = (i) => setItems(items.filter((_, idx) => idx !== i));
+
+  return (
+    <div>
+      <p className="block mb-2 text-label-lg font-label-lg text-on-surface-variant">
+        {label}
+      </p>
+      <div className="space-y-2">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <input
+              value={item}
+              onChange={(e) => update(i, e.target.value)}
+              placeholder={`${placeholder} ${i + 1}`}
+              className="flex-1 h-touch-target-min px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            />
+            {items.length > 1 && (
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="shrink-0 w-touch-target-min h-touch-target-min flex items-center justify-center rounded-lg text-error"
+              >
+                <Icon name="close" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="mt-2 flex items-center gap-1 text-label-lg font-label-lg text-primary"
+      >
+        <Icon name="add" className="text-[18px]" />
+        Add {label.toLowerCase().replace(/s$/, "")}
+      </button>
+    </div>
+  );
+}
 
 export default function AddDish() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
+    category: "",
     price: "",
     desc: "",
     tag: "",
-    discount: "",
-    spicyLevel: "0",
   });
-  const [category, setCategory] = useState(null);
-  const [photo, setPhoto] = useState(null);
+  const [ingredients, setIngredients] = useState([""]);
+  const [steps, setSteps] = useState([""]);
+  const [photo, setPhoto] = useState(null); // { url, file }
   const [camOpen, setCamOpen] = useState(false);
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const onFile = (file) => setPhoto({ url: URL.createObjectURL(file), file });
 
-  const validate = () => {
-    if (!form.name.trim()) return "Dish name is required.";
-    if (!category) return "Please select a category.";
-    if (!form.tag) return "Please select Veg or Non-Veg.";
-    const price = Number(form.price);
-    if (!Number.isFinite(price) || price <= 0) return "Enter a valid price.";
-    return "";
+  const onFile = (file) => {
+    setPhoto({ url: URL.createObjectURL(file), file });
   };
 
   const submit = async (e) => {
     e.preventDefault();
-    const validationError = validate();
-    if (validationError) return setErr(validationError);
-
     setErr("");
+
+    const cleanIngredients = ingredients.map((i) => i.trim()).filter(Boolean);
+    const cleanSteps = steps.map((s) => s.trim()).filter(Boolean);
+    if (cleanIngredients.length === 0) {
+      setErr("Add at least one ingredient.");
+      return;
+    }
+    if (cleanSteps.length === 0) {
+      setErr("Add at least one preparation step.");
+      return;
+    }
+
     setSaving(true);
     try {
       let imageKey;
-      if (photo) imageKey = await uploadPhoto("dish", photo.file);
-
+      if (photo) {
+        imageKey = await uploadDishImage(photo.file);
+      }
       await addDish({
         name: form.name.trim(),
-        category: category.name,
-        categoryId: category._id,
+        category: form.category,
         price: Number(form.price),
         desc: form.desc.trim(),
         tag: form.tag,
-        discount: form.discount ? Number(form.discount) : 0,
-        spicyLevel: Number(form.spicyLevel),
+        recipe: { ingredients: cleanIngredients, steps: cleanSteps },
         ...(imageKey && { imageKey }),
       });
       navigate("/menu");
@@ -179,7 +245,30 @@ export default function AddDish() {
             </div>
           </div>
 
-          <CategorySelect value={category?._id} onChange={setCategory} />
+          <div>
+            <label
+              htmlFor="category"
+              className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
+            >
+              Category
+            </label>
+            <select
+              id="category"
+              value={form.category}
+              onChange={set("category")}
+              required
+              className="w-full h-touch-target-min px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+            >
+              <option value="" disabled>
+                Select category
+              </option>
+              {categories.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <TextField
             label="Price (₹)"
@@ -190,36 +279,6 @@ export default function AddDish() {
             placeholder="0.00"
             required
           />
-
-          <div className="grid grid-cols-2 gap-stack-sm">
-            <TextField
-              label="Discount % (Optional)"
-              id="discount"
-              inputMode="numeric"
-              value={form.discount}
-              onChange={set("discount")}
-              placeholder="0"
-            />
-            <div>
-              <label
-                htmlFor="spicyLevel"
-                className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
-              >
-                Spice Level
-              </label>
-              <select
-                id="spicyLevel"
-                value={form.spicyLevel}
-                onChange={set("spicyLevel")}
-                className="w-full h-touch-target-min px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-              >
-                <option value="0">None</option>
-                <option value="1">Mild</option>
-                <option value="2">Medium</option>
-                <option value="3">Hot</option>
-              </select>
-            </div>
-          </div>
 
           <div>
             <label
@@ -238,6 +297,32 @@ export default function AddDish() {
             />
           </div>
 
+          <div className="border-t border-outline-variant pt-stack-lg">
+            <h3 className="text-headline-md font-headline-md text-on-surface mb-1">
+              Recipe (SOP)
+            </h3>
+            <p className="text-body-md text-on-surface-variant mb-stack-md">
+              This becomes the standard preparation guide for this dish — list
+              exact ingredients and steps.
+            </p>
+
+            <ListEditor
+              label="Ingredients"
+              placeholder="Ingredient"
+              items={ingredients}
+              setItems={setIngredients}
+            />
+
+            <div className="mt-stack-lg">
+              <ListEditor
+                label="Preparation Steps"
+                placeholder="Step"
+                items={steps}
+                setItems={setSteps}
+              />
+            </div>
+          </div>
+
           {err && (
             <div className="flex items-center gap-2 text-error px-4 py-3 bg-error-container rounded-lg">
               <Icon name="error" className="text-base" />
@@ -245,7 +330,7 @@ export default function AddDish() {
             </div>
           )}
 
-          <Button full type="submit" disabled={saving}>
+          <Button full type="submit" disabled={saving || !form.tag}>
             {saving ? "Saving..." : "Create Dish"}
           </Button>
         </form>
