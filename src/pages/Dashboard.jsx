@@ -5,6 +5,7 @@ import Icon from "../components/Icon";
 import api from "../services/api";
 import { BRAND_GRADIENT } from "../lib/brand";
 import LaunchOfferModal from "../components/LaunchOfferModal";
+import { useDishes, fetchDishes } from "../store/useDishes";
 
 function StatCard({
   icon,
@@ -40,6 +41,84 @@ function StatCard({
         </p>
       </div>
     </Card>
+  );
+}
+
+function RecipeCard({ dish }) {
+  const [open, setOpen] = useState(false);
+  const hasRecipe =
+    dish.recipe?.ingredients?.length > 0 || dish.recipe?.steps?.length > 0;
+  if (!hasRecipe) return null;
+
+  return (
+    <div className="rounded-xl border border-outline-variant overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-3 p-3 text-left"
+      >
+        <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0 overflow-hidden">
+          {dish.imageUrl ? (
+            <img
+              src={dish.imageUrl}
+              alt={dish.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Icon name="restaurant" className="text-outline text-[20px]" />
+          )}
+        </div>
+        <span className="flex-1 text-label-lg font-label-lg text-on-surface">
+          {dish.name}
+        </span>
+        <Icon
+          name={open ? "expand_less" : "expand_more"}
+          className="text-on-surface-variant text-[20px]"
+        />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 space-y-3">
+          {dish.recipe.ingredients?.length > 0 && (
+            <div>
+              <p className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Ingredients
+              </p>
+              <ul className="space-y-1">
+                {dish.recipe.ingredients.map((item, i) => (
+                  <li
+                    key={i}
+                    className="text-body-md text-on-surface flex items-start gap-2"
+                  >
+                    <span className="mt-1.5 w-1 h-1 rounded-full bg-primary shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {dish.recipe.steps?.length > 0 && (
+            <div>
+              <p className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Preparation Steps
+              </p>
+              <ol className="space-y-1.5">
+                {dish.recipe.steps.map((step, i) => (
+                  <li
+                    key={i}
+                    className="text-body-md text-on-surface flex items-start gap-2"
+                  >
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-surface-container-high text-label-sm font-label-sm flex items-center justify-center">
+                      {i + 1}
+                    </span>
+                    {step}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -114,6 +193,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showLaunchOffer, setShowLaunchOffer] = useState(false);
+  const { dishes } = useDishes();
 
   useEffect(() => {
     Promise.all([
@@ -126,6 +206,7 @@ export default function Dashboard() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+    fetchDishes();
   }, []);
 
   // Launch offer — same session-scoped key as Landing.jsx, so a homemaker
@@ -153,6 +234,10 @@ export default function Dashboard() {
           : status?.status === "rejected"
             ? "/verification-rejected"
             : "/verification-submitted";
+
+  const dishesWithRecipes = dishes.filter(
+    (d) => d.recipe?.ingredients?.length > 0 || d.recipe?.steps?.length > 0,
+  );
 
   return (
     <main className="max-w-md mx-auto px-margin-mobile pt-stack-lg animate-fade-in">
@@ -233,6 +318,28 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+
+      {dishesWithRecipes.length > 0 && (
+        <Card className="p-4 rounded-2xl mt-stack-lg">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-headline-md font-headline-md flex items-center gap-2">
+              <Icon name="receipt_long" className="text-[20px] text-primary" />
+              Your Recipes (SOPs)
+            </h3>
+            <button
+              onClick={() => navigate("/menu")}
+              className="text-primary text-label-lg font-label-lg"
+            >
+              See All
+            </button>
+          </div>
+          <div className="space-y-2">
+            {dishesWithRecipes.slice(0, 5).map((dish) => (
+              <RecipeCard key={dish._id} dish={dish} />
+            ))}
+          </div>
+        </Card>
+      )}
 
       <Card className="p-4 rounded-2xl mt-stack-lg">
         <div className="flex justify-between items-center mb-4">

@@ -27,51 +27,11 @@ async function uploadDishImage(file) {
   return data.key;
 }
 
-function ListEditor({ label, placeholder, items, setItems }) {
-  const update = (i, value) => {
-    const next = [...items];
-    next[i] = value;
-    setItems(next);
-  };
-  const add = () => setItems([...items, ""]);
-  const remove = (i) => setItems(items.filter((_, idx) => idx !== i));
-
-  return (
-    <div>
-      <p className="block mb-2 text-label-lg font-label-lg text-on-surface-variant">
-        {label}
-      </p>
-      <div className="space-y-2">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <input
-              value={item}
-              onChange={(e) => update(i, e.target.value)}
-              placeholder={`${placeholder} ${i + 1}`}
-              className="flex-1 h-touch-target-min px-4 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
-            />
-            {items.length > 1 && (
-              <button
-                type="button"
-                onClick={() => remove(i)}
-                className="shrink-0 w-touch-target-min h-touch-target-min flex items-center justify-center rounded-lg text-error"
-              >
-                <Icon name="close" />
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-      <button
-        type="button"
-        onClick={add}
-        className="mt-2 flex items-center gap-1 text-label-lg font-label-lg text-primary"
-      >
-        <Icon name="add" className="text-[18px]" />
-        Add {label.toLowerCase().replace(/s$/, "")}
-      </button>
-    </div>
-  );
+function linesToList(text) {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 export default function AddDish() {
@@ -83,8 +43,8 @@ export default function AddDish() {
     desc: "",
     tag: "",
   });
-  const [ingredients, setIngredients] = useState([""]);
-  const [steps, setSteps] = useState([""]);
+  const [ingredientsText, setIngredientsText] = useState("");
+  const [stepsText, setStepsText] = useState("");
   const [photo, setPhoto] = useState(null); // { url, file }
   const [camOpen, setCamOpen] = useState(false);
   const [err, setErr] = useState("");
@@ -100,13 +60,13 @@ export default function AddDish() {
     e.preventDefault();
     setErr("");
 
-    const cleanIngredients = ingredients.map((i) => i.trim()).filter(Boolean);
-    const cleanSteps = steps.map((s) => s.trim()).filter(Boolean);
-    if (cleanIngredients.length === 0) {
+    const ingredients = linesToList(ingredientsText);
+    const steps = linesToList(stepsText);
+    if (ingredients.length === 0) {
       setErr("Add at least one ingredient.");
       return;
     }
-    if (cleanSteps.length === 0) {
+    if (steps.length === 0) {
       setErr("Add at least one preparation step.");
       return;
     }
@@ -123,7 +83,7 @@ export default function AddDish() {
         price: Number(form.price),
         desc: form.desc.trim(),
         tag: form.tag,
-        recipe: { ingredients: cleanIngredients, steps: cleanSteps },
+        recipe: { ingredients, steps },
         ...(imageKey && { imageKey }),
       });
       navigate("/menu");
@@ -302,23 +262,45 @@ export default function AddDish() {
               Recipe (SOP)
             </h3>
             <p className="text-body-md text-on-surface-variant mb-stack-md">
-              This becomes the standard preparation guide for this dish — list
-              exact ingredients and steps.
+              Type one item per line — this becomes the standard preparation
+              guide for this dish.
             </p>
 
-            <ListEditor
-              label="Ingredients"
-              placeholder="Ingredient"
-              items={ingredients}
-              setItems={setIngredients}
-            />
+            <div className="mb-stack-md">
+              <label
+                htmlFor="ingredients"
+                className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
+              >
+                Ingredients
+              </label>
+              <textarea
+                id="ingredients"
+                value={ingredientsText}
+                onChange={(e) => setIngredientsText(e.target.value)}
+                rows={5}
+                placeholder={
+                  "2 cups rice\n1 onion, chopped\n1 tsp turmeric\nSalt to taste"
+                }
+                className="w-full px-4 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
+              />
+            </div>
 
-            <div className="mt-stack-lg">
-              <ListEditor
-                label="Preparation Steps"
-                placeholder="Step"
-                items={steps}
-                setItems={setSteps}
+            <div>
+              <label
+                htmlFor="steps"
+                className="block mb-2 text-label-lg font-label-lg text-on-surface-variant"
+              >
+                Preparation Steps
+              </label>
+              <textarea
+                id="steps"
+                value={stepsText}
+                onChange={(e) => setStepsText(e.target.value)}
+                rows={6}
+                placeholder={
+                  "Wash and soak rice for 20 minutes\nHeat oil, add onions and sauté until golden\nAdd rice and turmeric, mix well\nAdd water and simmer for 15 minutes"
+                }
+                className="w-full px-4 py-3 rounded-lg bg-surface-container-lowest border border-outline-variant text-body-md text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
               />
             </div>
           </div>
