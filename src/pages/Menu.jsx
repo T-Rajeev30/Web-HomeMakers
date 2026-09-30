@@ -31,6 +31,75 @@ function Toggle({ checked, onChange, disabled }) {
   );
 }
 
+function RecipeSection({ recipe }) {
+  const [open, setOpen] = useState(false);
+  const hasRecipe =
+    recipe?.ingredients?.length > 0 || recipe?.steps?.length > 0;
+
+  if (!hasRecipe) return null;
+
+  return (
+    <div className="pt-3 border-t border-outline-variant">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center justify-between w-full text-label-lg font-label-lg text-on-surface-variant"
+      >
+        <span className="flex items-center gap-1.5">
+          <Icon name="receipt_long" className="text-[18px]" />
+          Recipe (SOP)
+        </span>
+        <Icon
+          name={open ? "expand_less" : "expand_more"}
+          className="text-[20px]"
+        />
+      </button>
+      {open && (
+        <div className="mt-3 space-y-3">
+          {recipe.ingredients?.length > 0 && (
+            <div>
+              <p className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Ingredients
+              </p>
+              <ul className="space-y-1">
+                {recipe.ingredients.map((item, i) => (
+                  <li
+                    key={i}
+                    className="text-body-md text-on-surface flex items-start gap-2"
+                  >
+                    <span className="text-primary mt-1.5 w-1 h-1 rounded-full bg-primary shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {recipe.steps?.length > 0 && (
+            <div>
+              <p className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider mb-1.5">
+                Preparation Steps
+              </p>
+              <ol className="space-y-1.5">
+                {recipe.steps.map((step, i) => (
+                  <li
+                    key={i}
+                    className="text-body-md text-on-surface flex items-start gap-2"
+                  >
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-surface-container-high text-label-sm font-label-sm flex items-center justify-center">
+                      {i + 1}
+                    </span>
+                    {step}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Menu() {
   const { dishes, loading, error, savingId } = useDishes();
   const [query, setQuery] = useState("");
@@ -123,6 +192,9 @@ export default function Menu() {
               <p className="text-on-surface-variant text-body-md line-clamp-2">
                 {dish.desc}
               </p>
+
+              <RecipeSection recipe={dish.recipe} />
+
               <div className="pt-4 border-t border-outline-variant flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-label-lg font-label-lg text-on-surface-variant">
